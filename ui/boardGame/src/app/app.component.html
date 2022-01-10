@@ -1,0 +1,205 @@
+<p-toast></p-toast>
+
+<div *ngIf="!gameInitialized" style="margin: 5px">
+  <h2>Start a game</h2>
+  <span *ngIf="properties.gameId">Game ID: "{{ properties.gameId }}"</span>
+  <p>Provide player details below:</p>
+  <div
+    class="p-inputgroup"
+    *ngFor="let item of properties.playersInfo; let i = index"
+    style="margin-top: 5px"
+  >
+    <span class="p-inputgroup-addon">{{ COLOR_DOTS[item.color] }}</span>
+    <input
+      type="text"
+      pInputText
+      placeholder="{{ i == 0 ? 'Your name' : 'Player ' + (i + 1) + ' name' }}"
+      style="max-width: 200px"
+      [(ngModel)]="item.name"
+    />
+    <span class="p-inputgroup-addon">
+      <p-button
+        icon="pi pi-plus"
+        styleClass="p-button-sm p-button-secondary"
+        (click)="addPlayer()"
+      ></p-button>
+    </span>
+  </div>
+  <div style="margin-top: 10px">
+    <p-button label="Initialize" (onClick)="initialize_game()"></p-button>
+  </div>
+  <hr />
+  <h2>Join a game</h2>
+  <div class="p-grid">
+    <div class="p-inputgroup">
+      <span class="p-inputgroup-addon" style="width: 100px">Game ID</span>
+      <input
+        type="text"
+        pInputText
+        style="max-width: 200px"
+        [(ngModel)]="properties.gameId"
+      />
+    </div>
+  </div>
+  <div class="p-grid" style="margin-top: 5px">
+    <div class="p-col4">
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon" style="width: 100px">Your name</span>
+        <input
+          type="text"
+          pInputText
+          placeholder="Enter this"
+          style="max-width: 200px"
+          [(ngModel)]="playerState.name"
+        />
+      </div>
+    </div>
+
+    <div class="p-col4" style="margin-left: 10px">
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon" style="width: 100px">Your token</span>
+        <input
+          type="text"
+          pInputText
+          placeholder="or this"
+          style="max-width: 200px"
+          [(ngModel)]="playerState.token"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="p-grid" style="margin-top: 5px">
+    <p-button label="Join game" (click)="joinGame()"></p-button>
+  </div>
+</div>
+
+<div class="p-grid">
+  <div class="p-col" id="board"></div>
+  <div class="p-col" style="margin-top: 15px" *ngIf="gameInitialized">
+    <div class="p-grid" style="margin-top: 5px">
+      <div
+        class="p-d-flex p-ai-center"
+        *ngFor="let item of properties.playersInfo | keyvalue"
+      >
+        <p-chip
+          label="{{ item.value.name + ' ' + COLOR_DOTS[item.value.color] }}"
+          styleClass="p-mr-2 {{
+            item.value.id == playerState.id ? 'player_chip' : ''
+          }} {{
+            item.value.id == properties.boardState.turn
+              ? 'current_turn_chip'
+              : ''
+          }}"
+        ></p-chip>
+      </div>
+    </div>
+    <hr />
+    <p-accordion [multiple]="true">
+      <p-accordionTab header="Inventory" [selected]="true">
+        <div class="p-grid">
+          <p-chip
+            label="🪙 x {{ playerState.gold }}"
+            styleClass="p-mr-2"
+            pTooltip="Gold"
+            tooltipPosition="bottom"
+          ></p-chip>
+          <p-chip
+            label="🍎 x {{ playerState.prosperity_markers }}"
+            styleClass="p-mr-2"
+            pTooltip="Prosperity markers"
+            tooltipPosition="bottom"
+          ></p-chip>
+        </div>
+        <div class="p-grid" style="margin-top: 5px">
+          <img
+            src="assets/images/priest.png"
+            width="{{ cardWidth }}"
+            height="{{ cardHeight }}"
+            style="margin: 3px"
+            pTooltip="Priest card"
+            tooltipPosition="bottom"
+            *ngFor="
+              let item of [].constructor(playerState.priests);
+              let i = index
+            "
+          />
+          <img
+            src="assets/images/philosopher.png"
+            width="{{ cardWidth }}"
+            height="{{ cardHeight }}"
+            style="margin: 3px"
+            pTooltip="Philosopher card"
+            tooltipPosition="bottom"
+            *ngFor="
+              let item of [].constructor(playerState.philosophers);
+              let i = index
+            "
+          />
+        </div>
+      </p-accordionTab>
+      <p-accordionTab header="Creatures" [selected]="true">
+        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</p>
+      </p-accordionTab>
+      <p-accordionTab header="Bidding" [selected]="true">
+        <div
+          class="p-grid"
+          style="margin-top: 5px"
+          *ngFor="let item of properties.boardState.bids"
+        >
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon"
+              ><p-radioButton
+                name="bid"
+                value="{{ item.god }}"
+                [(ngModel)]="currentBid.god"
+                (onClick)="currentBid.maxBidAmount = item.maxBidAmount"
+              ></p-radioButton
+            ></span>
+            <span
+              class="p-inputgroup-addon"
+              style="width: 120px; justify-content: left"
+              >{{ item.god | titlecase }}</span
+            >
+            <span
+              class="p-inputgroup-addon"
+              tooltipDisabled="item.maxBidPlayerId == undefined"
+              pTooltip="{{
+                item.maxBidPlayerId
+                  ? properties.playersInfo[item.maxBidPlayerId]['name']
+                  : ''
+              }}"
+              tooltipPosition="bottom"
+              >{{
+                item.maxBidPlayerId
+                  ? COLOR_DOTS[
+                      properties.playersInfo[item.maxBidPlayerId]["color"]
+                    ]
+                  : ""
+              }}</span
+            >
+            <p-inputNumber
+              [ngModel]="
+                item.god == currentBid.god
+                  ? currentBid.maxBidAmount
+                  : item.maxBidAmount
+              "
+              [showButtons]="currentBid.god == item.god"
+              [min]="item.maxBidAmount ? item.maxBidAmount : 0"
+              (onInput)="currentBid.maxBidAmount = $event.value"
+            >
+            </p-inputNumber>
+            <div style="margin-left: 2px">
+              <p-button
+                type="button"
+                styleClass="p-button-outlined p-button-success"
+                label="Place Bid"
+                (onClick)="placeBid(item)"
+                *ngIf="currentBid.god == item.god"
+              ></p-button>
+            </div>
+          </div>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+</div>
