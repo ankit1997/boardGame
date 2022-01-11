@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   public cardWidth: number = 70;
   public cardHeight: number = 90;
   public currentBid: Bid = new Bid();
-  private prevBidGod: God = null;
+  public GODS = God;
 
   public COLORS = ['red', 'yellow', 'green', 'blue', 'black'];
   public COLOR_DOTS = {
@@ -64,6 +64,16 @@ export class AppComponent implements OnInit {
 
       this.properties.stage = Stages.NOT_STARTED;
     }
+    this.backendService.socket.on('error', (message: string) => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: message,
+      });
+    });
+    this.backendService.socket.on('boardState', (board: any) => {
+      this.set_properties(board);
+    });
   }
 
   initialize_game() {
@@ -90,67 +100,20 @@ export class AppComponent implements OnInit {
       });
       return;
     }
-    this.properties.gameId = 'id' + new Date().getTime();
-    this.backendService
-      .initializeGame(this.properties.gameId, this.properties.playersInfo)
-      .subscribe(
-        (result: any) => {
-          if (result.success) {
-            console.log('Your token is ' + result.token);
-            this.playerState.name = this.properties.playersInfo[0].name;
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Game started successfully',
-            });
-            this.init_properties(result.game);
-          } else {
-            console.log(result);
-          }
-        },
-        (error: any) => {
-          console.log(error);
-        }
-      );
+    this.backendService.initialize(this.properties.playersInfo);
   }
 
   joinGame() {
-    this.backendService
-      .joinGame(
-        this.properties.gameId,
-        this.playerState.name,
-        this.playerState.token
-      )
-      .subscribe(
-        (result: any) => {
-          if (result.success) {
-            if (!this.playerState.token) {
-              this.playerState.token = result.token;
-            }
-            console.log('Your token is ' + result.token);
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Game started successfully',
-            });
-            this.init_properties(result.game);
-          } else {
-            console.log(result);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: result.message,
-            });
-          }
-        },
-        (error: any) => {
-          console.log(error);
-        }
-      );
+    this.backendService.authenticate(
+      this.properties.gameId,
+      this.playerState.name,
+      this.playerState.token
+    );
   }
 
-  init_properties(response: any) {
+  set_properties(response: any) {
     this.properties = new Properties();
+    this.properties.gameId = response.gameId;
     this.properties.width = response.width;
     this.properties.height = response.height;
     this.properties.block_r = response.block_r;
@@ -164,42 +127,19 @@ export class AppComponent implements OnInit {
     this.properties.philosophers = response.philosophers;
     this.properties.soldiers = response.soldiers;
     this.properties.ships = response.ships;
+
     const boardState = new BoardState();
-    boardState.turn = 0;
-    boardState.bids = [
-      {
-        god: God.APOLLO,
-        maxBidAmount: undefined,
-        maxBidPlayerId: undefined,
-      },
-      {
-        god: God.ZEUS,
-        maxBidAmount: undefined,
-        maxBidPlayerId: undefined,
-      },
-      {
-        god: God.ARES,
-        maxBidAmount: undefined,
-        maxBidPlayerId: undefined,
-      },
-      {
-        god: God.POSEIDON,
-        maxBidAmount: undefined,
-        maxBidPlayerId: undefined,
-      },
-      {
-        god: God.ATHENA,
-        maxBidAmount: undefined,
-        maxBidPlayerId: undefined,
-      },
-    ];
+    boardState.turnOrder = response.boardState.turnOrder;
+    boardState.turn = response.boardState.turn;
+    boardState.bids = response.boardState.bids;
     this.properties.boardState = boardState;
 
     const playerId = Number.parseInt(Object.keys(response.players)[0]);
     this.playerState = response.players[playerId];
 
-    this.gameInitialized = true;
-    this.start();
+    if (!this.gameInitialized) {
+      this.start();
+    }
   }
 
   start() {
@@ -348,9 +288,15 @@ export class AppComponent implements OnInit {
   }
 
   placeBid(oldBid: Bid) {
-    console.log(oldBid);
-    console.log(this.currentBid);
     // bid validations
+    if (this.properties.boardState.turn != this.playerState.id) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Cannot bid, invalid turn',
+      });
+      return;
+    }
     if (
       this.currentBid.maxBidAmount == undefined ||
       this.currentBid.maxBidAmount == null ||
@@ -383,17 +329,22 @@ export class AppComponent implements OnInit {
       return;
     }
     if (
-      this.prevBidGod != null &&
-      this.prevBidGod != undefined &&
-      this.prevBidGod == this.currentBid.god
+      this.playerState.prevBidGod != null &&
+      this.playerState.prevBidGod != undefined &&
+      this.playerState.prevBidGod == this.currentBid.god
     ) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Cannot bid again on ' + this.prevBidGod,
+        detail: 'Cannot bid again on ' + this.playerState.prevBidGod,
       });
       return;
     }
+    this.backendService.placeBid(
+      this.properties.gameId,
+      this.currentBid.god,
+      this.currentBid.maxBidAmount
+    );
   }
 
   addPlayer() {
@@ -440,6 +391,7 @@ export class PlayerState {
   id: number;
   name: string;
   color: string;
+  prevBidGod: string;
   gold: number;
   prosperity_markers: number;
   priests: number;

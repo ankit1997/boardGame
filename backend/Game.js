@@ -1,8 +1,10 @@
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
+const { shuffle } = require("./utils");
 
-const new_game = (gameId, playersInfo) => {
+const getNewGame = (gameId, playersInfo) => {
     const game = {};
+    const startGold = 5;
     game.gameId = gameId;
     game.playersInfo = playersInfo;
     game.playersAuth = {};
@@ -10,6 +12,7 @@ const new_game = (gameId, playersInfo) => {
         game.playersAuth[player.id] = {
             joined: false,
             token: uuidv4(),
+            socketId: undefined,
         };
     }
     game.players = {};
@@ -19,7 +22,8 @@ const new_game = (gameId, playersInfo) => {
             id: player.id,
             name: player.name,
             color: player.color,
-            gold: 5,
+            prevBidGod: undefined,
+            gold: startGold,
             prosperity_markers: 0,
             priests: 0,
             philosophers: 0,
@@ -29,7 +33,7 @@ const new_game = (gameId, playersInfo) => {
     game.width = 1000;
     game.height = 700;
     game.block_r = 48;
-    game.gold = 100;
+    game.gold = 100 - startGold * playersInfo.length;
     game.prosperity_markers = 16;
     game.territory_markers = 15;
     game.priests = 18;
@@ -37,36 +41,53 @@ const new_game = (gameId, playersInfo) => {
     game.soldiers = 40;
     game.ships = 40;
     game.boardState = {
+        turnOrder: shuffle([...Array(playersInfo.length).keys()]),
         turn: -1,
         blockList: [],
-        bids: {},
+        bids: [
+            {
+                god: "ATHENA",
+                maxBidAmount: undefined,
+                maxBidPlayerId: undefined,
+            },
+            { god: "ARES", maxBidAmount: undefined, maxBidPlayerId: undefined },
+            { god: "ZEUS", maxBidAmount: undefined, maxBidPlayerId: undefined },
+            {
+                god: "POSEIDON",
+                maxBidAmount: undefined,
+                maxBidPlayerId: undefined,
+            },
+            {
+                god: "APOLLO",
+                maxBidAmount: undefined,
+                maxBidPlayerId: undefined,
+            },
+        ],
         ownership: {},
         prosperity_markers_loc: [],
         territory_markers_loc: [],
     };
+    game.boardState.turn = game.boardState.turnOrder[0];
+    shuffle(game.boardState.bids);
+
     return game;
 };
 
-const save_game = (game) => {
+const saveGame = (game) => {
     const str = JSON.stringify(game, null, 4);
 
     const fname = "sessions/" + game.gameId + ".json";
-    fs.writeFile(fname, str, function (err) {
-        if (err) throw err;
-        console.log("Saved game " + game.gameId);
-    });
+    fs.writeFileSync(fname, str);
 };
 
-const get_game = (gameId, res, next) => {
+const getGame = (gameId) => {
     const fname = "sessions/" + gameId + ".json";
-    fs.readFile(fname, "utf8", (err, jsonString) => {
-        if (err) {
-            console.log("File read failed:", err);
-            return;
-        }
-        res.locals.game = JSON.parse(jsonString);
-        next();
-    });
+    return JSON.parse(
+        fs.readFileSync(fname, {
+            encoding: "utf8",
+            flag: "r",
+        })
+    );
 };
 
 const find_player_id_by_token = (game, token) => {
@@ -87,7 +108,27 @@ const find_player_id_by_name = (game, name) => {
     return -1;
 };
 
-const get_game_for_player = (game, token) => {
+const findPlayerByName = (game, name) => {
+    for (let playerId in game.players) {
+        const player = game.players[playerId];
+        if (player.name == name) {
+            return player;
+        }
+    }
+    return undefined;
+};
+
+const findPlayerByToken = (game, token) => {
+    for (let playerId in game.players) {
+        const player = game.players[playerId];
+        if (player.token == token) {
+            return player;
+        }
+    }
+    return undefined;
+};
+
+const getPlayerGameObj = (game, token) => {
     let playerId = find_player_id_by_token(game, token);
     if (playerId == -1) {
         return undefined;
@@ -102,9 +143,11 @@ const get_game_for_player = (game, token) => {
     return obj;
 };
 
-exports.new_game = new_game;
-exports.save_game = save_game;
-exports.get_game = get_game;
+exports.getNewGame = getNewGame;
+exports.saveGame = saveGame;
+exports.getGame = getGame;
 exports.find_player_id_by_token = find_player_id_by_token;
 exports.find_player_id_by_name = find_player_id_by_name;
-exports.get_game_for_player = get_game_for_player;
+exports.getPlayerGameObj = getPlayerGameObj;
+exports.findPlayerByName = findPlayerByName;
+exports.findPlayerByToken = findPlayerByToken;

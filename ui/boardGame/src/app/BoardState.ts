@@ -1,6 +1,7 @@
 import { Block } from './Block';
 
 export class BoardState {
+  turnOrder: number[];
   turn: number;
   blockList: Block[];
 
@@ -12,15 +13,15 @@ export class BoardState {
 }
 
 export class Bid {
-  god: God;
+  god: string;
   maxBidAmount: number;
   maxBidPlayerId: number;
 }
 
-export enum God {
-  ATHENA = 'Athena 📕',
-  ARES = 'Ares 🤺',
-  ZEUS = 'Zeus ⚡',
-  POSEIDON = 'Poseidon 🚢',
-  APOLLO = 'Apollo 💰',
-}
+export const God = {
+  ATHENA: 'Athena 📕',
+  ARES: 'Ares 🤺',
+  ZEUS: 'Zeus ⚡',
+  POSEIDON: 'Poseidon 🚢',
+  APOLLO: 'Apollo 💰',
+};

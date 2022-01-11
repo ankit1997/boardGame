@@ -1,166 +1,147 @@
-const { response } = require("express");
 const express = require("express");
+const { v4: uuidv4 } = require("uuid");
 const {
-    new_game,
-    save_game,
-    get_game,
-    find_player_id_by_token,
-    find_player_id_by_name,
-    get_game_for_player,
+    saveGame,
+    getGame,
+    getPlayerGameObj,
+    findPlayerByName,
+    findPlayerByToken,
+    getNewGame,
 } = require("./Game");
-const { isEmptyString } = require("./utils");
-
-const app = express();
 
 // load environment variables
 require("dotenv").config();
 
 const port = process.env.SERVER_PORT;
-
-const globals = {
-    lockedGames: {},
-};
-
-// allow options request from any source
-app.options("*", (req, res) => {
-    // for CORS policy
-    res.setHeader("Access-Control-Allow-Origin", process.env.UI_URL); // allow requests from UI only!
-    res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
-    );
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.sendStatus(200).end();
-});
-
-app.use(express.json());
-
-app.use((req, res, next) => {
-    // Pre-checks and initializations before calling api code
-
-    console.log(req.url);
-
-    // for CORS policy
-    res.setHeader("Access-Control-Allow-Origin", process.env.UI_URL); // allow requests from UI only!
-    res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
-    );
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-
-    if (req.method == "OPTIONS") {
-        // specifically for CORS preflight request, send 200 status code back
-        res.sendStatus(200).end();
-        return;
-    }
-
-    let gameId = "";
-    if (req.body.gameId) {
-        gameId = req.body.gameId;
-    } else if (req.query.gameId) {
-        gameId = req.query.gameId;
-    }
-    res.locals.gameId = gameId;
-
-    if (req.body.token) {
-        res.locals.token = token;
-    } else if (req.query.token) {
-        res.locals.token = token;
-    }
-
-    if (gameId != "" && globals.lockedGames[gameId] == true) {
-        res.send({ success: false, message: "Game already locked, try again" });
-        return;
-    }
-    if (gameId != "") {
-        globals.lockedGames[gameId] = true;
-    }
-
-    if (req.url == "/initializeGame") {
-        next();
-    } else {
-        get_game(gameId, res, next);
-    }
-});
-
-app.use((req, res, next) => {
-    if (req.url != "/initializeGame" && res.locals.game == undefined) {
-        globals.lockedGames[req.body.gameId] = false;
-        res.send({ success: false, message: "Game not found" });
-        return;
-    }
-    next();
-});
-
-app.get("/", (req, res) => {
-    res.send("Welcome to the game");
-});
-
-const joinGame = (req, res, next) => {
-    const name = res.locals.name;
-    const token = res.locals.token;
-    let playerId = -1;
-
-    if (!isEmptyString(token)) {
-        playerId = find_player_id_by_token(res.locals.game, token);
-        if (playerId == -1) {
-            res.locals.response = { success: false, message: "Invalid token" };
-        } else {
-            res.locals.game.playersAuth[playerId].joined = true;
-        }
-    } else {
-        playerId = find_player_id_by_name(res.locals.game, name);
-        if (playerId == -1) {
-            res.locals.response = { success: false, message: "Invalid name" };
-        } else if (res.locals.game.playersAuth[playerId].joined == true) {
-            res.locals.response = {
-                success: false,
-                message: "Please use token to join",
-            };
-        } else {
-            res.locals.game.playersAuth[playerId].joined = true;
-            res.locals.token = res.locals.game.playersAuth[playerId].token;
-        }
-    }
-    next();
-};
-
-const getGameState = (req, res, next) => {
-    if (res.locals.response && !response.locals.response.success) {
-        next();
-    } else {
-        res.locals.response = {
-            success: true,
-            token: res.locals.token,
-            game: get_game_for_player(res.locals.game, res.locals.token),
-        };
-        next();
-    }
-};
-
-app.post(
-    "/initializeGame",
-    (req, res, next) => {
-        const game = new_game(res.locals.gameId, req.body.playersInfo);
-        res.locals.game = game;
-        res.locals.token = game.playersAuth[game.playersInfo[0].id].token;
-        next();
+const app = express();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http, {
+    cors: {
+        origin: ["http://localhost:4200"],
     },
-    joinGame,
-    getGameState
-);
+});
 
-app.post(
-    "/joinGame",
-    (req, res, next) => {
-        res.locals.name = req.body.name;
-        next();
-    },
-    joinGame,
-    getGameState
-);
+const sendGameObjToPlayer = (game, playerId) => {
+    // send game object to player with given id
+    const auth = game.playersAuth[playerId];
+    if (auth.socketId == undefined) {
+        return;
+    }
+    const socket = io.sockets.sockets.get(auth.socketId);
+    if (socket == undefined) {
+        return;
+    }
+    const gameObj = getPlayerGameObj(game, auth.token);
+    socket.emit("boardState", gameObj);
+    saveGame(game);
+};
 
-app.get("/game_state", getGameState);
+const sendGameObjToPlayers = (game) => {
+    // send game object (which might've been updated) to all players of the game
+    for (let playerInfo of game.playersInfo) {
+        sendGameObjToPlayer(game, playerInfo.id);
+    }
+};
+
+const sendError = (game, playerId, message) => {
+    const auth = game.playersAuth[playerId];
+    const socket = io.sockets.sockets.get(auth.socketId);
+    if (socket == undefined) {
+        return;
+    }
+    socket.emit("error", message);
+};
+
+const authUsingToken = (game, token, socket) => {
+    const player = findPlayerByToken(game, token);
+    if (player == undefined) {
+        return false;
+    }
+    game.playersAuth[player.id].joined = true;
+    game.playersAuth[player.id].socketId = socket.id;
+    socket["userData"]["id"] = player.id;
+    socket["userData"]["token"] = game.playersAuth[player.id].token;
+    sendGameObjToPlayer(game, player.id);
+    return true;
+};
+
+const authUsingName = (game, name, socket) => {
+    const player = findPlayerByName(game, name);
+    if (player == undefined) {
+        return false;
+    }
+    if (game.playersAuth[player.id].joined == true) {
+        sendError(game, player.id, "Join using token");
+        return false;
+    }
+    game.playersAuth[player.id].joined = true;
+    game.playersAuth[player.id].socketId = socket.id;
+    socket["userData"]["id"] = player.id;
+    socket["userData"]["token"] = game.playersAuth[player.id].token;
+    sendGameObjToPlayer(game, player.id);
+    return true;
+};
+
+const biddingsDone = (game) => {
+    const turnOrder = [];
+    for (let bid of game.boardState.bids) {
+        if (bid.maxBidPlayerId == undefined) {
+            continue;
+        }
+        const amountToBePaid =
+            bid.god == "APOLLO"
+                ? 0
+                : Math.max(
+                      1,
+                      bid.maxBidAmount -
+                          game.players[bid.maxBidPlayerId].priests
+                  );
+        game.players[bid.maxBidPlayerId].gold -= amountToBePaid;
+        game.gold += amountToBePaid;
+        turnOrder.push(bid.maxBidPlayerId);
+    }
+
+    game.boardState.turnOrder = turnOrder;
+    game.boardState.tunr = turnOrder[0];
+};
+
+const placeBid = (game, god, amount, playerId) => {
+    const bid = game.boardState.bids.filter((bid) => bid.god == god)[0];
+    if (bid.god == game.players[playerId].prevBidGod) {
+        sendError(game, playerId, "Cannot bid again to same God");
+        return;
+    }
+    const outBidPlayerId = bid.maxBidPlayerId;
+    const outBidAmount = bid.maxBidAmount;
+
+    if (outBidAmount != undefined && outBidAmount >= amount) {
+        sendError(game, playerId, "Bid amount is lower than expected");
+        return;
+    }
+
+    bid.maxBidAmount = amount;
+    bid.maxBidPlayerId = playerId;
+    game.players[playerId].prevBidGod = god;
+
+    const allBidsPlaced =
+        game.boardState.bids.filter(
+            (bid) => bid.maxBidPlayerId >= 0 && bid.maxBidAmount > 0
+        ).length == game.numPlayers;
+    if (allBidsPlaced) {
+        biddingsDone(game);
+    } else {
+        if (outBidPlayerId != undefined && outBidPlayerId != null) {
+            game.boardState.turn = outBidPlayerId;
+        } else {
+            game.boardState.turn = game.boardState.turnOrder.filter((id) => {
+                return game.boardState.bids.every(
+                    (bid) => bid.maxBidPlayerId != id
+                );
+            })[0];
+        }
+    }
+    sendGameObjToPlayers(game);
+};
 
 app.get("/player_info", (req, res) => {
     res.send({});
@@ -174,26 +155,40 @@ app.get("/load_creatures", (req, res) => {
     res.send({});
 });
 
-app.post("/place_bid", (req, res) => {
-    res.send({});
-});
-
 app.post("/fight", (req, res) => {
     res.send({});
 });
 
-app.use((req, res) => {
-    if (res.locals.gameId) {
-        globals.lockedGames[res.locals.gameId] = false;
-    }
-    if (res.locals.response && res.locals.response.success && res.locals.game) {
-        save_game(res.locals.game);
-    }
-    if (res.locals.response) {
-        res.send(res.locals.response);
-    }
+io.on("connection", (socket) => {
+    console.log("A user connected");
+    socket["userData"] = {};
+
+    socket.on("initialize", (playersInfo) => {
+        const gameId = uuidv4();
+        const game = getNewGame(gameId, playersInfo);
+        console.log("Game created with ID = " + gameId);
+        socket["userData"]["id"] = playersInfo[0].id;
+        socket["userData"]["token"] = game.players[playersInfo[0].id].token;
+        authUsingToken(game, game.players[playersInfo[0].id].token, socket);
+    });
+
+    socket.on("authenticate", (gameId, name, token) => {
+        const game = getGame(gameId);
+        if (!authUsingToken(game, token)) {
+            authUsingName(game, name, socket);
+        }
+    });
+
+    socket.on("placeBid", (gameId, god, amount) => {
+        const game = getGame(gameId);
+        placeBid(game, god, amount, socket["userData"]["id"]);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected");
+    });
 });
 
-app.listen(port, () => {
+http.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
 });

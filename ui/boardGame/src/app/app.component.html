@@ -94,6 +94,7 @@
       </div>
     </div>
     <hr />
+    <h3>Game ID: {{ properties.gameId }}</h3>
     <p-accordion [multiple]="true">
       <p-accordionTab header="Inventory" [selected]="true">
         <div class="p-grid">
@@ -153,24 +154,25 @@
                 value="{{ item.god }}"
                 [(ngModel)]="currentBid.god"
                 (onClick)="currentBid.maxBidAmount = item.maxBidAmount"
+                [disabled]="properties.boardState.turn != playerState.id"
               ></p-radioButton
             ></span>
             <span
               class="p-inputgroup-addon"
               style="width: 120px; justify-content: left"
-              >{{ item.god | titlecase }}</span
+              >{{ GODS[item.god] | titlecase }}</span
             >
             <span
               class="p-inputgroup-addon"
               tooltipDisabled="item.maxBidPlayerId == undefined"
               pTooltip="{{
-                item.maxBidPlayerId
+                item.maxBidPlayerId >= 0
                   ? properties.playersInfo[item.maxBidPlayerId]['name']
                   : ''
               }}"
               tooltipPosition="bottom"
               >{{
-                item.maxBidPlayerId
+                item.maxBidPlayerId >= 0
                   ? COLOR_DOTS[
                       properties.playersInfo[item.maxBidPlayerId]["color"]
                     ]
@@ -186,6 +188,7 @@
               [showButtons]="currentBid.god == item.god"
               [min]="item.maxBidAmount ? item.maxBidAmount : 0"
               (onInput)="currentBid.maxBidAmount = $event.value"
+              [disabled]="properties.boardState.turn != playerState.id"
             >
             </p-inputNumber>
             <div style="margin-left: 2px">
