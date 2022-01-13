@@ -7,6 +7,7 @@ const {
     findPlayerByName,
     findPlayerByToken,
     getNewGame,
+    groupLand,
 } = require("./Game");
 
 // load environment variables
@@ -53,6 +54,9 @@ const sendError = (game, playerId, message) => {
 };
 
 const authUsingToken = (game, token, socket) => {
+    if (token == undefined || token == null || token == "") {
+        return false;
+    }
     const player = findPlayerByToken(game, token);
     if (player == undefined) {
         return false;
@@ -66,6 +70,9 @@ const authUsingToken = (game, token, socket) => {
 };
 
 const authUsingName = (game, name, socket) => {
+    if (name == undefined || name == null || name == "") {
+        return false;
+    }
     const player = findPlayerByName(game, name);
     if (player == undefined) {
         return false;
@@ -102,10 +109,14 @@ const biddingsDone = (game) => {
     }
 
     game.boardState.turnOrder = turnOrder;
-    game.boardState.tunr = turnOrder[0];
+    game.boardState.turn = turnOrder[0];
+    game.boardState.stage = "ACTION";
 };
 
 const placeBid = (game, god, amount, playerId) => {
+    if (game.boardState.stage != "BIDDING") {
+        return;
+    }
     const bid = game.boardState.bids.filter((bid) => bid.god == god)[0];
     if (bid.god == game.players[playerId].prevBidGod) {
         sendError(game, playerId, "Cannot bid again to same God");
@@ -143,6 +154,20 @@ const placeBid = (game, god, amount, playerId) => {
     sendGameObjToPlayers(game);
 };
 
+const earnGold = (game) => {
+    for (let playerId in game.players) {
+        const earnings = game.boardState.board.blocks
+            .filter(
+                (block) =>
+                    block.owner == playerId && block.numProsperityMarkers > 0
+            )
+            .map((block) => block.numProsperityMarkers)
+            .reduce((a, b) => a + b, 0);
+        game.players[playerId].gold += earnings;
+    }
+    sendGameObjToPlayers(game);
+};
+
 app.get("/player_info", (req, res) => {
     res.send({});
 });
@@ -174,8 +199,59 @@ io.on("connection", (socket) => {
 
     socket.on("authenticate", (gameId, name, token) => {
         const game = getGame(gameId);
-        if (!authUsingToken(game, token)) {
+        if (!authUsingToken(game, token, socket)) {
             authUsingName(game, name, socket);
+        }
+    });
+
+    socket.on("setup", (gameId, blockId, marker, obj, completeFlag) => {
+        const game = getGame(gameId);
+        if (completeFlag == true && game.boardState.stage == "SETUP") {
+            groupLand(game);
+            game.boardState.stage = "BIDDING";
+            console.log("Completing setup stage for game " + gameId);
+            sendGameObjToPlayers(game);
+            return;
+        }
+        let blockIndex = game.boardState.board.blocks.findIndex(
+            (b) => b.id == blockId
+        );
+        if (blockIndex != -1) {
+            const block = game.boardState.board.blocks[blockIndex];
+            if (marker == "LAND") {
+                const landBlock = {};
+                landBlock.type = "land";
+                landBlock.id = block.id;
+                landBlock.owner = block.owner;
+                landBlock.x = block.x;
+                landBlock.y = block.y;
+                landBlock.r = block.r;
+                landBlock.numProsperityMarkers = obj.numProsperityMarkers;
+                landBlock.numForts = 0;
+                landBlock.numPorts = 0;
+                landBlock.numUniversities = 0;
+                landBlock.numTemples = 0;
+                landBlock.numSoldiers = 0;
+                landBlock.groupId = undefined;
+                game.boardState.board.blocks[blockIndex] = landBlock;
+                sendGameObjToPlayers(game);
+            } else if (marker == "SEA") {
+                const seaBlock = {};
+                seaBlock.type = "sea";
+                seaBlock.id = block.id;
+                seaBlock.owner = block.owner;
+                seaBlock.x = block.x;
+                seaBlock.y = block.y;
+                seaBlock.r = block.r;
+                seaBlock.numShips = block.numShips;
+                seaBlock.numProsperityMarkers = obj.numProsperityMarkers;
+                game.boardState.board.blocks[blockIndex] = seaBlock;
+                sendGameObjToPlayers(game);
+            } else if (marker == "PROSPERITY" && obj.numProsperityMarkers > 0) {
+                game.boardState.board.blocks[blockIndex].numProsperityMarkers +=
+                    obj.numProsperityMarkers;
+                sendGameObjToPlayers(game);
+            }
         }
     });
 

@@ -11,6 +11,7 @@ import { BadgeModule } from 'primeng/badge';
 import { AccordionModule } from 'primeng/accordion';
 import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
+import { SplitButtonModule } from 'primeng/splitbutton';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { InputTextModule } from 'primeng/inputtext';
@@ -33,6 +34,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     AccordionModule,
     TooltipModule,
     ButtonModule,
+    SplitButtonModule,
     RadioButtonModule,
     ToastModule,
     InputTextModule,

@@ -3,6 +3,7 @@ import { BoardState } from './BoardState';
 
 export class Properties {
   gameId: string;
+  creator: number;
   numPlayers: number;
   playersInfo: PlayerInfo[];
 

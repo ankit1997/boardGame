@@ -1,6 +1,7 @@
 import { Block } from './Block';
 
 export class BoardState {
+  stage: string;
   turnOrder: number[];
   turn: number;
   blockList: Block[];
@@ -10,6 +11,7 @@ export class BoardState {
   ownership: any;
   prosperity_markers_loc: number[];
   territory_markers_loc: number[];
+  board: any;
 }
 
 export class Bid {

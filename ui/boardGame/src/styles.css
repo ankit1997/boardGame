@@ -22,3 +22,8 @@
   border-style: solid;
   border-color: black;
 }
+
+.p-chip img {
+  border-radius: 50%;
+  margin-left: 2px;
+}

@@ -8,7 +8,6 @@ import { Properties } from './Properties';
 
 // Aliases
 const loader = Loader;
-const resources = Loader.shared.resources;
 
 @Component({
   selector: 'app-root',
@@ -21,7 +20,7 @@ export class AppComponent implements OnInit {
   private app: Application;
   public properties: Properties;
   private graphics = new Graphics();
-  private blockList: Block[] = [];
+  private blockList: any[] = [];
   public playerState: PlayerState = new PlayerState();
   public cardWidth: number = 70;
   public cardHeight: number = 90;
@@ -36,6 +35,35 @@ export class AppComponent implements OnInit {
     blue: '🔵',
     black: '⚫',
   };
+
+  public numProsperityMarkers: number = 0;
+  public setupAction: string = 'LAND';
+  public setActionMenu: any[] = [
+    {
+      label: 'Mark Land',
+      command: () => {
+        this.setupAction = 'LAND';
+      },
+    },
+    {
+      label: 'Mark Sea',
+      command: () => {
+        this.setupAction = 'SEA';
+      },
+    },
+    {
+      label: 'Prosperity markers',
+      command: () => {
+        this.setupAction = 'PROSPERITY';
+      },
+    },
+    {
+      label: 'Done',
+      command: () => {
+        this.finishSetup();
+      },
+    },
+  ];
 
   constructor(
     private messageService: MessageService,
@@ -64,6 +92,7 @@ export class AppComponent implements OnInit {
 
       this.properties.stage = Stages.NOT_STARTED;
     }
+    //
     this.backendService.socket.on('error', (message: string) => {
       this.messageService.add({
         severity: 'error',
@@ -71,6 +100,7 @@ export class AppComponent implements OnInit {
         detail: message,
       });
     });
+    //
     this.backendService.socket.on('boardState', (board: any) => {
       this.set_properties(board);
     });
@@ -114,6 +144,7 @@ export class AppComponent implements OnInit {
   set_properties(response: any) {
     this.properties = new Properties();
     this.properties.gameId = response.gameId;
+    this.properties.creator = response.creator;
     this.properties.width = response.width;
     this.properties.height = response.height;
     this.properties.block_r = response.block_r;
@@ -129,9 +160,11 @@ export class AppComponent implements OnInit {
     this.properties.ships = response.ships;
 
     const boardState = new BoardState();
+    boardState.stage = response.boardState.stage;
     boardState.turnOrder = response.boardState.turnOrder;
     boardState.turn = response.boardState.turn;
     boardState.bids = response.boardState.bids;
+    boardState.board = response.boardState.board;
     this.properties.boardState = boardState;
 
     const playerId = Number.parseInt(Object.keys(response.players)[0]);
@@ -139,6 +172,8 @@ export class AppComponent implements OnInit {
 
     if (!this.gameInitialized) {
       this.start();
+    } else if (boardState.stage == 'SETUP') {
+      this.setup_board();
     }
   }
 
@@ -172,25 +207,42 @@ export class AppComponent implements OnInit {
 
     loader.shared
       .add([
-        // 'assets/images/ocean.jpeg',
-        // 'assets/images/soldier.png',
-        // 'assets/images/land.png',
-        // 'assets/images/ares.png',
-        // 'assets/images/poseidon.png',
-        // 'assets/images/athena.png',
-        // 'assets/images/apollo.png',
-        // 'assets/images/zeus.png',
         'assets/images/red/ship.png',
         'assets/images/blue/ship.png',
         'assets/images/green/ship.png',
         'assets/images/yellow/ship.png',
         'assets/images/black/ship.png',
+        'assets/images/prosperity_marker.png',
+        'assets/images/dotted_square.png',
       ])
       .load(this.setup_board.bind(this));
 
-    this.app.renderer.view.addEventListener('click', (e) =>
-      this.mark_as_land(e.x, e.y)
-    );
+    this.app.renderer.view.addEventListener('click', (e) => {
+      if (this.properties.boardState.stage == 'SETUP') {
+        const block = this.getBlockAtXY(e.x, e.y);
+        if (block == undefined) return;
+
+        if (this.setupAction == 'LAND') {
+          this.backendService.setup(this.properties.gameId, block.id, 'LAND', {
+            numProsperityMarkers: this.numProsperityMarkers,
+          });
+        } else if (this.setupAction == 'SEA') {
+          this.backendService.setup(this.properties.gameId, block.id, 'SEA', {
+            numProsperityMarkers: this.numProsperityMarkers,
+          });
+        } else if (this.setupAction == 'PROSPERITY') {
+          this.backendService.setup(
+            this.properties.gameId,
+            block.id,
+            'PROSPERITY',
+            {
+              numProsperityMarkers: this.numProsperityMarkers,
+            }
+          );
+        }
+      } else {
+      }
+    });
   }
 
   process_step() {
@@ -201,6 +253,8 @@ export class AppComponent implements OnInit {
   }
 
   setup_board() {
+    this.app.stage.removeChildren();
+    //
     this.graphics.lineStyle(0);
     this.graphics.beginFill(0x05d0eb);
     this.graphics.drawRect(0, 0, this.properties.width, this.properties.height);
@@ -208,79 +262,62 @@ export class AppComponent implements OnInit {
 
     // Draw ellipse for the playing area
     this.graphics.lineStyle(10, 0xeeeeff, 0.3);
-    const h = this.properties.width / 2,
-      a = h;
-    const k = this.properties.height / 2,
-      b = k;
-    this.graphics.drawEllipse(h, k, a - 10, b - 10);
+    this.graphics.drawEllipse(
+      this.properties.boardState.board.ellipse.x,
+      this.properties.boardState.board.ellipse.y,
+      this.properties.boardState.board.ellipse.width,
+      this.properties.boardState.board.ellipse.height
+    );
     this.graphics.endFill();
 
-    const isInsideGameArea = (x: number, y: number, r: number) => {
-      // checks if a point is inside playing area ellipse
-      const theta = Math.atan2(y - k, x - h);
-      x += r * Math.cos(theta);
-      y += r * Math.sin(theta);
-      return (
-        Math.pow(x - h, 2) / Math.pow(a, 2) +
-          Math.pow(y - k, 2) / Math.pow(b, 2) <=
-        1
-      );
-    };
-
-    const r = this.properties.block_r;
-    let s = 0;
-    let id = 0;
-    let vjump = r * Math.cos(Math.PI / 6);
-    let hjump = r * Math.sin(Math.PI / 6);
-    for (let y = r; y < this.properties.height; y += vjump, s++) {
-      for (
-        let x = this.properties.width / 2 + (s % 2 == 0 ? 0 : r + hjump);
-        x < this.properties.width;
-        x += 3 * r
-      ) {
-        if (!isInsideGameArea(x, y, r)) break;
-        const seaBlock = new SeaBlock(id++, undefined, x, y, r);
+    // draw sea blocks
+    for (let block of this.properties.boardState.board.blocks) {
+      if (block.type == 'sea') {
+        const seaBlock = new SeaBlock();
+        seaBlock.id = block.id;
+        seaBlock.owner = block.owner;
+        seaBlock.x = block.x;
+        seaBlock.y = block.y;
+        seaBlock.r = block.r;
+        seaBlock.numShips = block.numShips;
+        seaBlock.numProsperityMarkers = block.numProsperityMarkers;
         seaBlock.draw(this.graphics);
-        this.blockList[seaBlock.id] = seaBlock;
-      }
-      for (
-        let x = this.properties.width / 2 - (s % 2 == 0 ? 3 * r : r + hjump);
-        x >= 0;
-        x -= 3 * r
-      ) {
-        if (!isInsideGameArea(x, y, r)) break;
-        const seaBlock = new SeaBlock(id++, undefined, x, y, r);
-        seaBlock.draw(this.graphics);
-        this.blockList[seaBlock.id] = seaBlock;
+        this.blockList[block.id] = seaBlock;
+      } else if (block.type == 'land') {
+        const landBlock = new LandBlock();
+        landBlock.id = block.id;
+        landBlock.owner = block.owner;
+        landBlock.x = block.x;
+        landBlock.y = block.y;
+        landBlock.r = block.r;
+        landBlock.numProsperityMarkers = block.numProsperityMarkers;
+        landBlock.draw(this.graphics);
+        this.blockList[block.id] = landBlock;
       }
     }
 
     this.app.stage.addChild(this.graphics);
+
+    for (let block of this.blockList) {
+      block.drawMarkers(this.app.stage);
+      //block.drawText(this.app.stage);
+    }
   }
 
-  mark_as_land(x: number, y: number) {
-    if (this.properties.stage !== Stages.NOT_STARTED) {
-      console.log('Game already started, cannot mark block as land now');
-      return;
-    }
-
-    let blocks = this.blockList.filter(
-      (block) => block.type == 'sea' && block.polygon.contains(x, y)
-    );
-
-    if (blocks == undefined || blocks.length == 0) return;
-
-    const block = blocks[0];
-
-    const landBlock = new LandBlock(
-      block.id,
+  finishSetup() {
+    this.backendService.setup(
+      this.properties.gameId,
       undefined,
-      block.x,
-      block.y,
-      block.r
+      undefined,
+      undefined,
+      true
     );
-    landBlock.draw(this.graphics);
-    this.blockList[block.id] = landBlock;
+  }
+
+  getBlockAtXY(x: number, y: number): Block {
+    let blocks = this.blockList.filter((block) => block.polygon.contains(x, y));
+    if (blocks == undefined || blocks.length == 0) return undefined;
+    return blocks[0];
   }
 
   dice(): number {
@@ -376,6 +413,10 @@ export class AppComponent implements OnInit {
       new PlayerInfo(this.COLORS[this.properties.playersInfo.length])
     );
     console.log(this.properties.playersInfo);
+  }
+
+  copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text);
   }
 }
 

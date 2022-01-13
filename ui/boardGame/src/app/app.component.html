@@ -93,9 +93,94 @@
         ></p-chip>
       </div>
     </div>
+
+    <div
+      style="margin-top: 30px"
+      *ngIf="
+        properties.boardState.stage == 'SETUP' &&
+        playerState.id == properties.creator
+      "
+    >
+      <div>
+        <div style="margin-top: 15px">
+          <!-- <p-dropdown
+            [options]="mapList"
+            [(ngModel)]="selectedMap"
+            editable="true"
+            optionLabel="name"
+          ></p-dropdown> -->
+        </div>
+
+        <div style="margin-top: 25px">
+          <span class="p-float-label">
+            <p-inputNumber
+              id="numProsperityMarkersId"
+              [(ngModel)]="numProsperityMarkers"
+              [showButtons]="true"
+              [min]="0"
+              [max]="2"
+            >
+            </p-inputNumber>
+            <label for="numProsperityMarkersId"># Prosperity markers</label>
+          </span>
+        </div>
+      </div>
+
+      <div class="p-grid" style="margin-top: 20px; margin-left: 5px">
+        <p-splitButton label="Save" [model]="setActionMenu"></p-splitButton>
+      </div>
+    </div>
+
     <hr />
-    <h3>Game ID: {{ properties.gameId }}</h3>
-    <p-accordion [multiple]="true">
+
+    <p-accordion
+      [multiple]="true"
+      *ngIf="properties.boardState.stage != 'SETUP'"
+    >
+      <p-accordionTab header="Game details" [selected]="false">
+        <div class="p-grid">
+          <div class="p-inputgroup" style="margin-top: 20px">
+            <span class="p-float-label">
+              <input
+                id="gameIdInputText"
+                type="text"
+                pInputText
+                [ngModel]="properties.gameId"
+                style="max-width: 400px"
+                [disabled]="true"
+              />
+              <label for="gameIdInputText">Game ID (save this somewhere)</label>
+              <p-button
+                (onClick)="copyToClipboard(properties.gameId)"
+                icon="pi pi-copy"
+                styleClass="p-button-warn"
+              ></p-button>
+            </span>
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-inputgroup" style="margin-top: 40px">
+            <span class="p-float-label">
+              <input
+                id="playerTokenInputText"
+                type="text"
+                pInputText
+                [ngModel]="playerState.token"
+                style="max-width: 400px"
+                [disabled]="true"
+              />
+              <label for="playerTokenInputText"
+                >Player Token (save this somewhere)</label
+              >
+              <p-button
+                (onClick)="copyToClipboard(playerState.token)"
+                icon="pi pi-copy"
+                styleClass="p-button-warn"
+              ></p-button>
+            </span>
+          </div>
+        </div>
+      </p-accordionTab>
       <p-accordionTab header="Inventory" [selected]="true">
         <div class="p-grid">
           <p-chip
@@ -105,8 +190,9 @@
             tooltipPosition="bottom"
           ></p-chip>
           <p-chip
-            label="🍎 x {{ playerState.prosperity_markers }}"
-            styleClass="p-mr-2"
+            label=" x {{ playerState.prosperity_markers }}"
+            image="assets/images/prosperity_marker.png"
+            styleClass="p-mr-3"
             pTooltip="Prosperity markers"
             tooltipPosition="bottom"
           ></p-chip>
@@ -141,7 +227,10 @@
       <p-accordionTab header="Creatures" [selected]="true">
         <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</p>
       </p-accordionTab>
-      <p-accordionTab header="Bidding" [selected]="true">
+      <p-accordionTab
+        header="Bidding"
+        [selected]="properties.boardState.stage == 'BIDDING'"
+      >
         <div
           class="p-grid"
           style="margin-top: 5px"
@@ -154,7 +243,10 @@
                 value="{{ item.god }}"
                 [(ngModel)]="currentBid.god"
                 (onClick)="currentBid.maxBidAmount = item.maxBidAmount"
-                [disabled]="properties.boardState.turn != playerState.id"
+                [disabled]="
+                  properties.boardState.stage != 'BIDDING' ||
+                  properties.boardState.turn != playerState.id
+                "
               ></p-radioButton
             ></span>
             <span
@@ -185,7 +277,10 @@
                   ? currentBid.maxBidAmount
                   : item.maxBidAmount
               "
-              [showButtons]="currentBid.god == item.god"
+              [showButtons]="
+                properties.boardState.stage == 'BIDDING' &&
+                currentBid.god == item.god
+              "
               [min]="item.maxBidAmount ? item.maxBidAmount : 0"
               (onInput)="currentBid.maxBidAmount = $event.value"
               [disabled]="properties.boardState.turn != playerState.id"
@@ -193,11 +288,14 @@
             </p-inputNumber>
             <div style="margin-left: 2px">
               <p-button
-                type="button"
                 styleClass="p-button-outlined p-button-success"
                 label="Place Bid"
                 (onClick)="placeBid(item)"
-                *ngIf="currentBid.god == item.god"
+                *ngIf="
+                  properties.boardState.stage == 'BIDDING' &&
+                  currentBid.god == item.god &&
+                  playerState.id == properties.boardState.turn
+                "
               ></p-button>
             </div>
           </div>

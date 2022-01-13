@@ -16,6 +16,16 @@ export class BackendService {
     this.socket.emit('authenticate', gameId, name, token);
   }
 
+  setup(
+    gameId: string,
+    blockId: number,
+    marker: string,
+    obj: any,
+    completeFlag?: boolean
+  ) {
+    this.socket.emit('setup', gameId, blockId, marker, obj, completeFlag);
+  }
+
   placeBid(gameId: string, god: string, amount: number) {
     this.socket.emit('placeBid', gameId, god, amount);
   }
