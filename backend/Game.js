@@ -16,6 +16,9 @@ const isInsideGameArea = (x, y, h, k, r) => {
 
 const setupBoard = (width, height, r) => {
     const board = {};
+    board["width"] = width;
+    board["height"] = height;
+    board["r"] = r;
     board["ellipse"] = {
         x: width / 2,
         width: width / 2 - 10,
@@ -24,6 +27,7 @@ const setupBoard = (width, height, r) => {
     };
     board["blocks"] = [];
 
+    // draw hexagons of sea blocks
     let s = 0;
     let id = 0;
     let vjump = r * Math.cos(Math.PI / 6);
@@ -43,7 +47,7 @@ const setupBoard = (width, height, r) => {
                 x: x,
                 y: y,
                 r: r,
-                numShips: 0,
+                numShips: 1,
                 numProsperityMarkers: 0,
                 type: "sea",
             };
@@ -63,7 +67,7 @@ const setupBoard = (width, height, r) => {
                 x: x,
                 y: y,
                 r: r,
-                numShips: 0,
+                numShips: 1,
                 numProsperityMarkers: 0,
                 type: "sea",
             };
@@ -111,16 +115,43 @@ const groupLand = (game) => {
         findConnected(i, distanceMatrix, connectedBlocks);
         const connectedBlocksArray = Array.from(connectedBlocks);
         connectedBlocksArray.forEach((item) => visited.add(item));
-        connectedBlocksArray.forEach((idx) => {
+        connectedBlocksArray.forEach((idx, j) => {
             landBlocks[idx].groupId = groupId;
+            landBlocks[idx].groupSize = connectedBlocksArray.length;
+            if (landBlocks[idx].groupSize == 1) {
+                landBlocks[idx].numProsperityMarkers = 2;
+            } else if (landBlocks[idx].groupSize == 2 && j == 0) {
+                landBlocks[idx].numProsperityMarkers = 1;
+            } else {
+                landBlocks[idx].numProsperityMarkers = 0;
+            }
         });
         groupId++;
     }
 };
 
-const getNewGame = (gameId, playersInfo) => {
+const getNewGame = (gameId, width, height, playersInfo) => {
     const game = {};
     const startGold = 5;
+
+    game.width = width;
+    game.height = height;
+    game.block_r = 48;
+
+    const fpath = "boards/board" + playersInfo.length + ".json";
+    let board = undefined;
+    if (fs.existsSync(fpath)) {
+        board = JSON.parse(
+            fs.readFileSync(fpath, {
+                encoding: "utf8",
+                flag: "r",
+            })
+        );
+        game.width = board.width;
+        game.height = board.height;
+        game.block_r = board.r;
+    }
+
     game.gameId = gameId;
     game.playersInfo = playersInfo;
     game.creator = playersInfo[0].id;
@@ -144,12 +175,12 @@ const getNewGame = (gameId, playersInfo) => {
             prosperity_markers: 0,
             priests: 0,
             philosophers: 0,
+            dice: 0,
+            soldiers: 0,
+            ships: 0,
         };
     }
     game.numPlayers = game.playersInfo.length;
-    game.width = 1400;
-    game.height = 800;
-    game.block_r = 50;
     game.gold = 100 - startGold * playersInfo.length;
     game.prosperity_markers = 16;
     game.territory_markers = 15;
@@ -184,17 +215,26 @@ const getNewGame = (gameId, playersInfo) => {
         ownership: {},
         prosperity_markers_loc: [],
         territory_markers_loc: [],
-        board: setupBoard(game.width, game.height, game.block_r),
+        board:
+            board == undefined
+                ? setupBoard(game.width, game.height, game.block_r)
+                : board,
     };
     game.boardState.turn = game.boardState.turnOrder[0];
     shuffle(game.boardState.bids);
+    groupLand(game);
 
     return game;
 };
 
+const saveBoard = (board, numPlayers) => {
+    const fpath = "boards/board" + numPlayers + ".json";
+    const str = JSON.stringify(board, null, 2);
+    fs.writeFileSync(fpath, str);
+};
+
 const saveGame = (game) => {
     const str = JSON.stringify(game, null, 2);
-
     const fname = "sessions/" + game.gameId + ".json";
     fs.writeFileSync(fname, str);
 };
@@ -209,45 +249,8 @@ const getGame = (gameId) => {
     );
 };
 
-const findPlayerByName = (game, name) => {
-    for (let playerId in game.players) {
-        const player = game.players[playerId];
-        if (player.name == name) {
-            return player;
-        }
-    }
-    return undefined;
-};
-
-const findPlayerByToken = (game, token) => {
-    for (let playerId in game.players) {
-        const player = game.players[playerId];
-        if (player.token == token) {
-            return player;
-        }
-    }
-    return undefined;
-};
-
-const getPlayerGameObj = (game, token) => {
-    let player = findPlayerByToken(game, token);
-    if (player == undefined) {
-        return undefined;
-    }
-    const obj = JSON.parse(JSON.stringify(game));
-    delete obj.playersAuth;
-    for (let playerId in obj.players) {
-        if (game.playersAuth[playerId].token != token) {
-            delete obj.players[playerId];
-        }
-    }
-    return obj;
-};
-
 exports.groupLand = groupLand;
 exports.getNewGame = getNewGame;
+exports.saveBoard = saveBoard;
 exports.saveGame = saveGame;
 exports.getGame = getGame;
-exports.getPlayerGameObj = getPlayerGameObj;
-exports.findPlayerByName = findPlayerByName;
-exports.findPlayerByToken = findPlayerByToken;

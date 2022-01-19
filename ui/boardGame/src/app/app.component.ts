@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Application, Graphics, Loader } from 'pixi.js';
+import { Application, Graphics, Loader, Sprite, Texture } from 'pixi.js';
 import { MessageService } from 'primeng/api';
 import { BackendService } from './backend.service';
 import { Block, LandBlock, SeaBlock } from './Block';
 import { Bid, BoardState, God } from './BoardState';
+import { Piece } from './Piece';
 import { Properties } from './Properties';
 
 // Aliases
 const loader = Loader;
+const resources = Loader.shared.resources;
 
 @Component({
   selector: 'app-root',
@@ -36,34 +38,15 @@ export class AppComponent implements OnInit {
     black: '⚫',
   };
 
+  private numPlayers = 0;
   public numProsperityMarkers: number = 0;
   public setupAction: string = 'LAND';
-  public setActionMenu: any[] = [
-    {
-      label: 'Mark Land',
-      command: () => {
-        this.setupAction = 'LAND';
-      },
-    },
-    {
-      label: 'Mark Sea',
-      command: () => {
-        this.setupAction = 'SEA';
-      },
-    },
-    {
-      label: 'Prosperity markers',
-      command: () => {
-        this.setupAction = 'PROSPERITY';
-      },
-    },
-    {
-      label: 'Done',
-      command: () => {
-        this.finishSetup();
-      },
-    },
-  ];
+  public setupBtnLabel: string = 'Mark Land';
+  public setActionMenu: any[] = [];
+  public placingSoldier: boolean = false;
+  public placingShip: boolean = false;
+
+  public selectedMarker: any;
 
   constructor(
     private messageService: MessageService,
@@ -72,10 +55,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.gameInitialized) {
-      this.properties = new Properties();
-
-      this.properties.playersInfo = [];
-
       const player1 = new PlayerInfo(this.COLORS[0]);
       player1.id = 0;
       player1.name = 'Ankit';
@@ -88,7 +67,19 @@ export class AppComponent implements OnInit {
       const player4 = new PlayerInfo(this.COLORS[3]);
       player4.id = 3;
       player4.name = 'Priyam';
-      this.properties.playersInfo = [player1, player2, player3, player4];
+      const player5 = new PlayerInfo(this.COLORS[4]);
+      player5.id = 4;
+      player5.name = 'Vibhor';
+      this.properties = new Properties(4);
+      this.properties.playersInfo = [];
+      this.properties.playersInfo = [
+        player1,
+        player2,
+        player3,
+        player4,
+        player5,
+      ];
+      this.numPlayers = this.properties.playersInfo.length;
 
       this.properties.stage = Stages.NOT_STARTED;
     }
@@ -130,7 +121,86 @@ export class AppComponent implements OnInit {
       });
       return;
     }
-    this.backendService.initialize(this.properties.playersInfo);
+    this.backendService.initialize(
+      this.properties.width,
+      this.properties.height,
+      this.properties.playersInfo
+    );
+    this.onInitialization();
+  }
+
+  onInitialization() {
+    this.setActionMenu = [
+      {
+        label: 'Mark Land',
+        command: () => {
+          this.setupBtnLabel = 'Mark Land';
+          this.numProsperityMarkers = 0;
+          this.setupAction = 'LAND';
+        },
+      },
+      {
+        label: 'Mark Sea',
+        command: () => {
+          this.setupBtnLabel = 'Mark Sea';
+          this.setupAction = 'SEA';
+        },
+      },
+      {
+        label: 'Red markers',
+        visible: this.numPlayers > 0,
+        command: () => {
+          this.setupBtnLabel = 'Red markers';
+          this.setupAction = 'RED';
+        },
+      },
+      {
+        label: 'Yellow markers',
+        visible: this.numPlayers > 1,
+        command: () => {
+          this.setupBtnLabel = 'Yellow markers';
+          this.setupAction = 'YELLOW';
+        },
+      },
+      {
+        label: 'Green markers',
+        visible: this.numPlayers > 2,
+        command: () => {
+          this.setupBtnLabel = 'Green markers';
+          this.setupAction = 'GREEN';
+        },
+      },
+      {
+        label: 'Blue markers',
+        visible: this.numPlayers > 3,
+        command: () => {
+          this.setupBtnLabel = 'Blue markers';
+          this.setupAction = 'BLUE';
+        },
+      },
+      {
+        label: 'Black markers',
+        visible: this.numPlayers > 4,
+        command: () => {
+          this.setupBtnLabel = 'Black markers';
+          this.setupAction = 'BLACK';
+        },
+      },
+      {
+        label: 'Done',
+        command: () => {
+          this.setupAction = undefined;
+          this.finishSetup();
+        },
+      },
+      {
+        label: 'Done & Save',
+        command: () => {
+          this.setupAction = undefined;
+          this.finishSetup(true);
+        },
+      },
+    ];
   }
 
   joinGame() {
@@ -142,7 +212,7 @@ export class AppComponent implements OnInit {
   }
 
   set_properties(response: any) {
-    this.properties = new Properties();
+    this.properties = new Properties(response.numPlayers);
     this.properties.gameId = response.gameId;
     this.properties.creator = response.creator;
     this.properties.width = response.width;
@@ -150,6 +220,7 @@ export class AppComponent implements OnInit {
     this.properties.block_r = response.block_r;
     this.properties.numPlayers = response.numPlayers;
     this.properties.playersInfo = response.playersInfo;
+    this.properties.players = response.players;
     this.properties.stage = Stages.NOT_STARTED;
     this.properties.gold = response.gold;
     this.properties.prosperity_markers = response.prosperity_markers;
@@ -174,6 +245,8 @@ export class AppComponent implements OnInit {
       this.start();
     } else if (boardState.stage == 'SETUP') {
       this.setup_board();
+    } else {
+      this.update_board();
     }
   }
 
@@ -202,6 +275,8 @@ export class AppComponent implements OnInit {
       backgroundAlpha: 1.0,
       backgroundColor: 0x1099bb,
     });
+    this.app.stage.interactive = true;
+    this.app.stage.hitArea = this.app.renderer.screen;
 
     document.getElementById('board').appendChild(this.app.view);
 
@@ -212,35 +287,65 @@ export class AppComponent implements OnInit {
         'assets/images/green/ship.png',
         'assets/images/yellow/ship.png',
         'assets/images/black/ship.png',
+        'assets/images/red/soldier.png',
+        'assets/images/blue/soldier.png',
+        'assets/images/green/soldier.png',
+        'assets/images/yellow/soldier.png',
+        'assets/images/black/soldier.png',
         'assets/images/prosperity_marker.png',
         'assets/images/dotted_square.png',
       ])
       .load(this.setup_board.bind(this));
 
     this.app.renderer.view.addEventListener('click', (e) => {
+      //
+      // During setup stage, update the board
+      console.log(e.x + ', ' + e.y);
       if (this.properties.boardState.stage == 'SETUP') {
+        // get block at the clicked location
         const block = this.getBlockAtXY(e.x, e.y);
         if (block == undefined) return;
 
         if (this.setupAction == 'LAND') {
-          this.backendService.setup(this.properties.gameId, block.id, 'LAND', {
-            numProsperityMarkers: this.numProsperityMarkers,
-          });
-        } else if (this.setupAction == 'SEA') {
-          this.backendService.setup(this.properties.gameId, block.id, 'SEA', {
-            numProsperityMarkers: this.numProsperityMarkers,
-          });
-        } else if (this.setupAction == 'PROSPERITY') {
+          // mark block as land
           this.backendService.setup(
             this.properties.gameId,
             block.id,
-            'PROSPERITY',
-            {
-              numProsperityMarkers: this.numProsperityMarkers,
-            }
+            'LAND',
+            undefined
+          );
+        } else if (this.setupAction == 'SEA') {
+          // mark block as sea
+          this.backendService.setup(this.properties.gameId, block.id, 'SEA', {
+            numProsperityMarkers: this.numProsperityMarkers,
+          });
+        } else if (
+          this.COLORS.findIndex(
+            (col: string) => col.toUpperCase() == this.setupAction
+          ) != -1
+        ) {
+          // add ship or soldier on the block
+
+          let playerInfo = this.properties.getPlayerByColor(this.setupAction);
+          if (playerInfo == undefined) return;
+
+          const obj = {
+            playerId: playerInfo.id,
+          };
+
+          if (block.type == 'land') {
+            obj['soldiers'] = this.placingSoldier ? 1 : 0;
+          } else if (block.type == 'sea') {
+            obj['ships'] = this.placingShip ? 1 : 0;
+          }
+
+          this.backendService.setup(
+            this.properties.gameId,
+            block.id,
+            'PLAYER',
+            obj
           );
         }
-      } else {
       }
     });
   }
@@ -290,6 +395,11 @@ export class AppComponent implements OnInit {
         landBlock.x = block.x;
         landBlock.y = block.y;
         landBlock.r = block.r;
+        landBlock.numSoldiers = block.numSoldiers;
+        landBlock.numForts = block.numForts;
+        landBlock.numPorts = block.numPorts;
+        landBlock.numUniversities = block.numUniversities;
+        landBlock.numTemples = block.numTemples;
         landBlock.numProsperityMarkers = block.numProsperityMarkers;
         landBlock.draw(this.graphics);
         this.blockList[block.id] = landBlock;
@@ -299,17 +409,86 @@ export class AppComponent implements OnInit {
     this.app.stage.addChild(this.graphics);
 
     for (let block of this.blockList) {
+      // > draw markers
       block.drawMarkers(this.app.stage);
-      //block.drawText(this.app.stage);
+
+      // > draw ships
+      if (block.type == 'sea' && block.numShips > 0 && block.owner >= 0) {
+        for (let i = 0; i < block.numShips; i++) {
+          const owner = this.properties.getPlayerById(block.owner);
+          const piece = new Piece(owner.color, 'ship');
+          piece.x = block.x + i * 10;
+          piece.y = block.y + i * 5;
+          block.pieces.push(piece);
+        }
+      }
+
+      // > draw soldiers
+      if (block.type == 'land' && block.numSoldiers > 0 && block.owner >= 0) {
+        for (let i = 0; i < block.numSoldiers; i++) {
+          const owner = this.properties.getPlayerById(block.owner);
+          const piece = new Piece(owner.color, 'soldier');
+          piece.x = block.x + i * 10;
+          piece.y = block.y;
+          block.pieces.push(piece);
+        }
+      }
+
+      for (let piece of block.pieces) {
+        piece.draw(this.app.stage);
+      }
     }
   }
 
-  finishSetup() {
+  update_board() {
+    for (let block of this.properties.boardState.board.blocks) {
+      const blockObj = this.blockList[block.id];
+      if (blockObj == undefined) continue;
+
+      // 1> update prosperity markers
+      if (
+        blockObj.numProsperityMarkers != block.numProsperityMarkers &&
+        block.numProsperityMarkers > blockObj.numProsperityMarkers
+      ) {
+        const diff = block.numProsperityMarkers - blockObj.numProsperityMarkers;
+        for (
+          let i = blockObj.numProsperityMarkers;
+          i < blockObj.numProsperityMarkers + diff;
+          i++
+        ) {
+          blockObj.addProsperityMarker(this.app.stage, i);
+        }
+      }
+
+      // 2> update owners
+      if (blockObj.owner != block.owner) {
+        blockObj.owner = block.owner;
+      }
+
+      // 3> update soldiers and ships
+      if (
+        blockObj.type == 'sea' &&
+        block.numShips != undefined &&
+        block.numShips >= 0 &&
+        blockObj.numShips != block.numShips
+      ) {
+        if (block.numShips > 0) {
+        }
+
+        if (blockObj.owner != undefined) {
+        } else if (block.numShips == 0 && blockObj.numShips != 0) {
+        }
+        // const color = this.properties.players[blockObj.owner].color;
+      }
+    }
+  }
+
+  finishSetup(saveFlag: boolean = false) {
     this.backendService.setup(
       this.properties.gameId,
       undefined,
       undefined,
-      undefined,
+      { save: saveFlag },
       true
     );
   }
@@ -393,7 +572,6 @@ export class AppComponent implements OnInit {
       });
       return;
     }
-    console.log(this.properties.playersInfo);
     if (
       this.properties.playersInfo.find(
         (playerInfo: PlayerInfo) =>
@@ -412,6 +590,7 @@ export class AppComponent implements OnInit {
     this.properties.playersInfo.push(
       new PlayerInfo(this.COLORS[this.properties.playersInfo.length])
     );
+    this.numPlayers++;
     console.log(this.properties.playersInfo);
   }
 
@@ -437,6 +616,9 @@ export class PlayerState {
   prosperity_markers: number;
   priests: number;
   philosophers: number;
+  dice: number;
+  soldiers: number;
+  ships: number;
 }
 
 export class PlayerInfo {

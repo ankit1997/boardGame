@@ -79,6 +79,7 @@
     <div class="p-grid" style="margin-top: 5px">
       <div
         class="p-d-flex p-ai-center"
+        style="margin-left: 5px"
         *ngFor="let item of properties.playersInfo | keyvalue"
       >
         <p-chip
@@ -89,6 +90,12 @@
             item.value.id == properties.boardState.turn
               ? 'current_turn_chip'
               : ''
+          }}"
+          pBadge
+          value="{{
+            properties.boardState.turnOrder.indexOf(item.value.id) +
+              1 +
+              (item.value.id == properties.boardState.turn ? '*' : '')
           }}"
         ></p-chip>
       </div>
@@ -111,14 +118,14 @@
           ></p-dropdown> -->
         </div>
 
-        <div style="margin-top: 25px">
+        <div style="margin-top: 25px" *ngIf="setupAction == 'SEA'">
           <span class="p-float-label">
             <p-inputNumber
               id="numProsperityMarkersId"
               [(ngModel)]="numProsperityMarkers"
               [showButtons]="true"
               [min]="0"
-              [max]="2"
+              [max]="1"
             >
             </p-inputNumber>
             <label for="numProsperityMarkersId"># Prosperity markers</label>
@@ -127,7 +134,32 @@
       </div>
 
       <div class="p-grid" style="margin-top: 20px; margin-left: 5px">
-        <p-splitButton label="Save" [model]="setActionMenu"></p-splitButton>
+        <p-splitButton
+          label="{{ setupBtnLabel }}"
+          [model]="setActionMenu"
+        ></p-splitButton>
+        <div
+          class="p-field-checkbox"
+          style="margin-left: 10px; margin-top: 10px"
+        >
+          <p-checkbox
+            [(ngModel)]="placingSoldier"
+            binary="true"
+            inputId="placingSoldierId"
+          ></p-checkbox>
+          <label for="placingSoldierId">Toggle soldier</label>
+        </div>
+        <div
+          class="p-field-checkbox"
+          style="margin-left: 10px; margin-top: 10px"
+        >
+          <p-checkbox
+            [(ngModel)]="placingShip"
+            binary="true"
+            inputId="placingShipId"
+          ></p-checkbox>
+          <label for="placingShipId">Toggle ship</label>
+        </div>
       </div>
     </div>
 
@@ -194,6 +226,12 @@
             image="assets/images/prosperity_marker.png"
             styleClass="p-mr-3"
             pTooltip="Prosperity markers"
+            tooltipPosition="bottom"
+          ></p-chip>
+          <p-chip
+            label="🤺 x {{ playerState.soldiers }}"
+            styleClass="p-mr-3"
+            pTooltip="Soldiers"
             tooltipPosition="bottom"
           ></p-chip>
         </div>

@@ -8,8 +8,8 @@ import { PlayerInfo } from './app.component';
 export class BackendService {
   constructor(public socket: Socket) {}
 
-  initialize(playersInfo: PlayerInfo[]) {
-    this.socket.emit('initialize', playersInfo);
+  initialize(width: number, height: number, playersInfo: PlayerInfo[]) {
+    this.socket.emit('initialize', width, height, playersInfo);
   }
 
   authenticate(gameId: string, name: string, token: string) {

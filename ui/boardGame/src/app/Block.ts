@@ -1,12 +1,5 @@
-import {
-  Container,
-  Graphics,
-  Loader,
-  Polygon,
-  Sprite,
-  Text,
-  Texture,
-} from 'pixi.js';
+import { Container, Graphics, Loader, Polygon, Sprite, Texture } from 'pixi.js';
+import { Piece } from './Piece';
 
 const resources = Loader.shared.resources;
 
@@ -33,6 +26,7 @@ export class Block {
   public owner: number;
   public polygon: Polygon;
   public numProsperityMarkers: number;
+  public pieces: Piece[] = [];
 
   constructor(public type: string) {}
 
@@ -50,40 +44,9 @@ export class Block {
     const sprite: Sprite = new Sprite(texture);
     sprite.x = this.x - 0.4 * this.r + i * 10;
     sprite.y = this.y - 0.85 * this.r + i * 5;
-    sprite.width = 32;
-    sprite.height = 32;
+    sprite.width = 30;
+    sprite.height = 30;
     container.addChild(sprite);
-  }
-
-  drawText(container: Container, textArray: string[]) {
-    if (this.numProsperityMarkers > 0) {
-      textArray.unshift('🍎 x ' + this.numProsperityMarkers);
-    }
-    textArray = this.justifyCenter(textArray);
-    const text = textArray.join('\n\n');
-    if (text != '') {
-      const prosperityMarkerText = new Text(text, {
-        fontSize: 12,
-      });
-      prosperityMarkerText.x = this.x - 0.4 * this.r;
-      prosperityMarkerText.y = this.y - 0.7 * this.r;
-      container.addChild(prosperityMarkerText);
-    }
-  }
-
-  justifyCenter(textArray: string[]) {
-    const lenArray = textArray.map((text) => text.length);
-    if (lenArray.length == 0) {
-      return textArray;
-    }
-    const maxLen = lenArray.reduce((a: number, b: number) => Math.max(a, b));
-    const out = [];
-    for (let text of textArray) {
-      const n = text.length;
-      const padding = Math.floor((maxLen - n) / 2);
-      out.push(' '.repeat(padding) + text);
-    }
-    return out;
   }
 }
 
@@ -102,10 +65,6 @@ export class SeaBlock extends Block {
 
   drawMarkers(container: Container) {
     super.drawMarkers(container);
-  }
-
-  drawText(container: Container): void {
-    super.drawText(container, []);
   }
 }
 
@@ -130,10 +89,5 @@ export class LandBlock extends Block {
 
   drawMarkers(container: Container) {
     super.drawMarkers(container);
-  }
-
-  drawText(container: Container): void {
-    const text = [];
-    super.drawText(container, text);
   }
 }

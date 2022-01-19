@@ -15,6 +15,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
 
 import { AppComponent } from './app.component';
 
@@ -38,6 +39,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     RadioButtonModule,
     ToastModule,
     InputTextModule,
+    CheckboxModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
