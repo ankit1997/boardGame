@@ -73,4 +73,22 @@ const biddingsDone = (game) => {
     game.boardState.stage = "ACTION";
 };
 
+const endbiddings = (game) => {
+
+const biddingendforzeus = (game, playerId) => {
+    game.player[playerId].priests++;
+}
+const biddingendforposeidon = (game, playerId) => {
+    game.player[playerId].ships++;
+}
+const biddingendforares = (game, playerId) => {
+    game.player[playerId].soldiers++;
+}
+const biddingendforathena = (game, playerId) => {
+    game.player[playerId].philosphers++;
+}
+}
+
+
+
 exports.placeBid = placeBid;

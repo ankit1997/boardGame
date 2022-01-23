@@ -178,6 +178,12 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             dice: 0,
             soldiers: 0,
             ships: 0,
+            temples: 0,
+            universities: 0,
+            ports: 0,
+            fortress: 0,
+            metropolitan: 0,
+            creatures: []
         };
     }
     game.numPlayers = game.playersInfo.length;
@@ -188,6 +194,9 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     game.philosophers = 17;
     game.soldiers = 40;
     game.ships = 40;
+    game.creatures_pile = ['CHIMERA','CYCLOPS','DRYAD','THE_FATES','GIANT','GRIFFON','HARPY','PEGASUS','SATYR'
+                     ,'SIREN','SPHINX','SYLPH','CHIRON','MEDUSA','MINOTAUR','POLYPHEMUS','THE_KRAKEN'];
+    game.creatures_open = {};
     game.boardState = {
         stage: "SETUP",
         turnOrder: shuffle([...Array(playersInfo.length).keys()]),
@@ -215,6 +224,10 @@ const getNewGame = (gameId, width, height, playersInfo) => {
         ownership: {},
         prosperity_markers_loc: [],
         territory_markers_loc: [],
+        temple_building_loc: [],
+        ports_building_loc: [],
+        fortress_building_loc: [],
+        universities_building_loc: [],
         board:
             board == undefined
                 ? setupBoard(game.width, game.height, game.block_r)

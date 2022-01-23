@@ -430,6 +430,7 @@ export class AppComponent implements OnInit {
           const piece = new Piece(owner.color, 'soldier');
           piece.x = block.x + i * 10;
           piece.y = block.y;
+          console.log(block.x + "SHIVAM" + block.y)
           block.pieces.push(piece);
         }
       }
