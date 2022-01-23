@@ -339,6 +339,19 @@
           </div>
         </div>
       </p-accordionTab>
+      <p-accordionTab
+        header="Action"
+        *ngIf="
+          properties.boardState.stage == 'ACTION' &&
+          properties.boardState.turn == playerState.id
+        "
+      >
+        <div *ngIf="playerState.prevBidGod == 'ARES'"></div>
+        <div *ngIf="playerState.prevBidGod == 'ATHENA'"></div>
+        <div *ngIf="playerState.prevBidGod == 'ZEUS'"></div>
+        <div *ngIf="playerState.prevBidGod == 'POSEIDON'"></div>
+        <div *ngIf="playerState.prevBidGod == 'APOLLO'"></div>
+      </p-accordionTab>
     </p-accordion>
   </div>
 </div>
