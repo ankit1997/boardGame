@@ -30,6 +30,8 @@ function creature_THE_FATES(playerId, creature_index){
 function creature_GRIFFON(playerId, creature_index){
 }
 function creature_GIANT(playerId, creature_index){
+    
+    /*
     // pop up player name and building name to destroy.
     player_bulding_to_be_destroyed;
     building_to_be_destroyed;
@@ -44,6 +46,7 @@ function creature_GIANT(playerId, creature_index){
         if building_to_be_destroyed == 'universities'
             player_bulding_to_be_destroyed.universities--;
     }
+    */
 
 }
 function creature_HARPY(playerId, creature_index){
@@ -71,7 +74,7 @@ function creature_DRYAD(playerId, creature_index)
 {
     //Open a pop up asking for name of player to take priest card from.
     
-    player_to_taken_priest_from = findPlayerByName(name)
+    /*player_to_taken_priest_from = findPlayerByName(name)
     
     if(findPlayerByName(name) != undefined)
     {
@@ -82,10 +85,12 @@ function creature_DRYAD(playerId, creature_index)
             player[playerId].priests++;
         }
     }
+    */
 }
 
 function creature_CYCLOPS(playerId, creature_index)
 {
+    /*
     //pop up or drop down box for replace a building with another. 
     old_building_to_replace;
     new_building_to_construct;
@@ -94,12 +99,13 @@ function creature_CYCLOPS(playerId, creature_index)
         player[playerId].temples--
         player.
     }
+    */
 
 
 }
 function creature_SATYR(playerId, creature_index)
 {
-    //Open a pop up asking for name of player to take priest card from.
+    /*//Open a pop up asking for name of player to take priest card from.
     
     player_to_taken_philospher_from = findPlayerByName(name)
     
@@ -111,7 +117,8 @@ function creature_SATYR(playerId, creature_index)
             player_to_taken_philospher_from.philosophers--;
             player[playerId].philosophers++;
         }
-    }
+    }*/
+
 }
 
 

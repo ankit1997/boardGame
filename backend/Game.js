@@ -182,8 +182,8 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             universities: 0,
             ports: 0,
             fortress: 0,
-            metropolitan: 0
-            creatures[]
+            metropolitan: 0,
+            creatures: []
         };
     }
     game.numPlayers = game.playersInfo.length;
@@ -194,8 +194,8 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     game.philosophers = 17;
     game.soldiers = 40;
     game.ships = 40;
-    game.creatures_pile = {'CHIMERA','CYCLOPS','DRYAD','THE_FATES','GIANT','GRIFFON','HARPY','PEGASUS','SATYR'
-                     ,'SIREN','SPHINX','SYLPH','CHIRON','MEDUSA','MINOTAUR','POLYPHEMUS','THE_KRAKEN'};
+    game.creatures_pile = ['CHIMERA','CYCLOPS','DRYAD','THE_FATES','GIANT','GRIFFON','HARPY','PEGASUS','SATYR'
+                     ,'SIREN','SPHINX','SYLPH','CHIRON','MEDUSA','MINOTAUR','POLYPHEMUS','THE_KRAKEN'];
     game.creatures_open = {};
     game.boardState = {
         stage: "SETUP",
@@ -227,7 +227,7 @@ const getNewGame = (gameId, width, height, playersInfo) => {
         temple_building_loc: [],
         ports_building_loc: [],
         fortress_building_loc: [],
-        universities_building_loc: []
+        universities_building_loc: [],
         board:
             board == undefined
                 ? setupBoard(game.width, game.height, game.block_r)
