@@ -184,8 +184,14 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             fortress: 0,
             metropolitan: 0,
             creatures: [],
+            // below are stuff added in current user turn
             soldiersAdded: 0,
             shipsAdded: 0,
+            portsAdded: 0,
+            fortsAdded: 0,
+            universitiesAdded: 0,
+            templesAdded: 0,
+            metropolitansAdded: 0,
         };
     }
     game.numPlayers = game.playersInfo.length;

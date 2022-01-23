@@ -153,6 +153,38 @@ io.on("connection", (socket) => {
         placeBid(game, god, amount, socket["userData"]["id"]);
     });
 
+    socket.on("action", (gameId, actionObj) => {
+        if (!verify(socket)) return;
+        const game = getGame(gameId);
+        if (game.boardState.stage != "ACTION") return;
+        /* 
+        
+        code @moga
+            socket["userData"]["id"] - for user's id
+            actionObj = {
+                endTurn: boolean,
+                soldierBlockId: number,
+                shipBlockId: number,
+                fortBlockId: number,
+                portBlockId: number,
+                templeBlockId: number,
+                universityBlockId: number,
+                metropolitanBlockId: number,
+                creature: {
+                    // not implemented yet but this will contain creatureId and other fields to perform creature action sent from UI
+                }
+            }
+
+            Things to consider:
+            - add functions in separate files if necessary, don't write all code here in this place (block.js)
+            - piece is added in correct block type (e.g. ship in 'sea' only, temple in 'land' only, etc.)
+            - user has enough gold to perform operation (although this will be checked at UI too, double-check here also)
+            - if metropolitanBlockId is sent (i.e. not undefined), then check that user has all 4 blocks (temple, port, fort, university), 
+                and after building metropolitan, remove the count of all 4 blocks
+
+        */
+    });
+
     socket.on("disconnect", () => {
         socket["userData"]["id"] = undefined;
         socket["userData"]["token"] = undefined;

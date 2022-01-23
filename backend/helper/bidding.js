@@ -66,6 +66,13 @@ const biddingsDone = (game) => {
                   );
         game.players[bid.maxBidPlayerId].gold -= amountToBePaid;
         game.gold += amountToBePaid;
+        game.players[bid.maxBidPlayerId].soldiersAdded = 0;
+        game.players[bid.maxBidPlayerId].shipsAdded = 0;
+        game.players[bid.maxBidPlayerId].portsAdded = 0;
+        game.players[bid.maxBidPlayerId].fortsAdded = 0;
+        game.players[bid.maxBidPlayerId].universitiesAdded = 0;
+        game.players[bid.maxBidPlayerId].templesAdded = 0;
+        game.players[bid.maxBidPlayerId].metropolitansAdded = 0;
         turnOrder.push(bid.maxBidPlayerId);
     }
     game.boardState.turnOrder = turnOrder;
@@ -74,21 +81,18 @@ const biddingsDone = (game) => {
 };
 
 const endbiddings = (game) => {
-
-const biddingendforzeus = (game, playerId) => {
-    game.player[playerId].priests++;
-}
-const biddingendforposeidon = (game, playerId) => {
-    game.player[playerId].ships++;
-}
-const biddingendforares = (game, playerId) => {
-    game.player[playerId].soldiers++;
-}
-const biddingendforathena = (game, playerId) => {
-    game.player[playerId].philosphers++;
-}
-}
-
-
+    const biddingendforzeus = (game, playerId) => {
+        game.player[playerId].priests++;
+    };
+    const biddingendforposeidon = (game, playerId) => {
+        game.player[playerId].ships++;
+    };
+    const biddingendforares = (game, playerId) => {
+        game.player[playerId].soldiers++;
+    };
+    const biddingendforathena = (game, playerId) => {
+        game.player[playerId].philosphers++;
+    };
+};
 
 exports.placeBid = placeBid;
