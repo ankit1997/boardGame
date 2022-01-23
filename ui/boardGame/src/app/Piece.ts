@@ -22,8 +22,8 @@ export class Piece {
       this.sprite.width = 170;
       this.sprite.height = 160;
     }
-    this.sprite.x = this.x;
-    this.sprite.y = this.y;
+    this.sprite.x = this.x - this.sprite.width/2;
+    this.sprite.y = this.y - this.sprite.height/2;
     container.addChild(this.sprite);
   }
 }
