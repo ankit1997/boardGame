@@ -300,7 +300,6 @@ export class AppComponent implements OnInit {
     this.app.renderer.view.addEventListener('click', (e) => {
       //
       // During setup stage, update the board
-      console.log(e.x + ', ' + e.y);
       if (this.properties.boardState.stage == 'SETUP') {
         // get block at the clicked location
         const block = this.getBlockAtXY(e.x, e.y);
@@ -325,29 +324,31 @@ export class AppComponent implements OnInit {
           ) != -1
         ) {
           // add ship or soldier on the block
-
           let playerInfo = this.properties.getPlayerByColor(this.setupAction);
           if (playerInfo == undefined) return;
-
-          const obj = {
-            playerId: playerInfo.id,
-          };
-
-          if (block.type == 'land') {
-            obj['soldiers'] = this.placingSoldier ? 1 : 0;
-          } else if (block.type == 'sea') {
-            obj['ships'] = this.placingShip ? 1 : 0;
-          }
-
-          this.backendService.setup(
-            this.properties.gameId,
-            block.id,
-            'PLAYER',
-            obj
-          );
+          this.addSoldierOrShip(playerInfo.id, block);
+        }
+      } else if (this.properties.boardState.stage == 'ACTION') {
+        if (this.placingSoldier || this.placingShip) {
+          const block = this.getBlockAtXY(e.x, e.y);
+          this.addSoldierOrShip(this.playerState.id, block);
         }
       }
     });
+  }
+
+  addSoldierOrShip(playerId, block) {
+    const obj = {
+      playerId: playerId,
+    };
+
+    if (block.type == 'land') {
+      obj['soldiers'] = this.placingSoldier ? 1 : 0;
+    } else if (block.type == 'sea') {
+      obj['ships'] = this.placingShip ? 1 : 0;
+    }
+
+    this.backendService.setup(this.properties.gameId, block.id, 'PLAYER', obj);
   }
 
   process_step() {
@@ -430,7 +431,6 @@ export class AppComponent implements OnInit {
           const piece = new Piece(owner.color, 'soldier');
           piece.x = block.x + i * 10;
           piece.y = block.y;
-          console.log(block.x + "SHIVAM" + block.y)
           block.pieces.push(piece);
         }
       }
@@ -620,6 +620,8 @@ export class PlayerState {
   dice: number;
   soldiers: number;
   ships: number;
+  soldiersAdded: number;
+  shipsAdded: number;
 }
 
 export class PlayerInfo {

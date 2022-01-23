@@ -346,11 +346,30 @@
           properties.boardState.turn == playerState.id
         "
       >
-        <div *ngIf="playerState.prevBidGod == 'ARES'"></div>
+        <div *ngIf="playerState.prevBidGod == 'ARES'">
+          <p-button
+            styleClass="p-button-outlined p-button-success"
+            label="Add soldier"
+            (onClick)="placingSoldier = true"
+            *ngIf="
+              playerState.soldiersAdded == 0 ||
+              playerState.gold > playerState.soldiersAdded
+            "
+          ></p-button>
+        </div>
         <div *ngIf="playerState.prevBidGod == 'ATHENA'"></div>
         <div *ngIf="playerState.prevBidGod == 'ZEUS'"></div>
-        <div *ngIf="playerState.prevBidGod == 'POSEIDON'"></div>
-        <div *ngIf="playerState.prevBidGod == 'APOLLO'"></div>
+        <div *ngIf="playerState.prevBidGod == 'POSEIDON'">
+          <p-button
+            styleClass="p-button-outlined p-button-success"
+            label="Add soldier"
+            (onClick)="placingShip = true"
+            *ngIf="
+              playerState.soldiersAdded == 0 ||
+              playerState.gold > playerState.soldiersAdded
+            "
+          ></p-button>
+        </div>
       </p-accordionTab>
     </p-accordion>
   </div>

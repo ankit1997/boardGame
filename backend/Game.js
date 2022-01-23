@@ -183,7 +183,9 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             ports: 0,
             fortress: 0,
             metropolitan: 0,
-            creatures: []
+            creatures: [],
+            soldiersAdded: 0,
+            shipsAdded: 0,
         };
     }
     game.numPlayers = game.playersInfo.length;
@@ -194,8 +196,25 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     game.philosophers = 17;
     game.soldiers = 40;
     game.ships = 40;
-    game.creatures_pile = ['CHIMERA','CYCLOPS','DRYAD','THE_FATES','GIANT','GRIFFON','HARPY','PEGASUS','SATYR'
-                     ,'SIREN','SPHINX','SYLPH','CHIRON','MEDUSA','MINOTAUR','POLYPHEMUS','THE_KRAKEN'];
+    game.creatures_pile = [
+        "CHIMERA",
+        "CYCLOPS",
+        "DRYAD",
+        "THE_FATES",
+        "GIANT",
+        "GRIFFON",
+        "HARPY",
+        "PEGASUS",
+        "SATYR",
+        "SIREN",
+        "SPHINX",
+        "SYLPH",
+        "CHIRON",
+        "MEDUSA",
+        "MINOTAUR",
+        "POLYPHEMUS",
+        "THE_KRAKEN",
+    ];
     game.creatures_open = {};
     game.boardState = {
         stage: "SETUP",
