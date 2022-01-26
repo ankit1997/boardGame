@@ -1,3 +1,4 @@
+const { initializeBidding } = require("./helper/bidding");
 const { sendGameObjToPlayers } = require("./helper/comms");
 
 const endTurn = (game, playerId) => {
@@ -7,12 +8,17 @@ const endTurn = (game, playerId) => {
         (id) => id == playerId
     );
 
-    if (currentTurnInd >= game.boardState.turnOrder.length - 1) {
+    if (!game.boardState.nextTurnOrder) {
+        game.boardState.nextTurnOrder = [];
+    }
+
+    if (currentTurnInd == game.boardState.turnOrder.length - 1) {
         // all players are done with action, now restart with bidding round
-        game.boardState.stage = "BIDDING";
-        game.logs.push("Starting bid process");
+        game.boardState.nextTurnOrder.push(playerId);
+        initializeBidding(game);
     } else if (currentTurnInd != -1) {
         game.boardState.turn = game.boardState.turnOrder[currentTurnInd + 1];
+        game.boardState.nextTurnOrder.push(playerId);
     }
 
     sendGameObjToPlayers(game);

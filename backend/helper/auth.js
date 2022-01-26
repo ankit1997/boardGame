@@ -2,7 +2,7 @@ const { sendGameObjToPlayer, sendError } = require("./comms");
 const { findPlayerByName, findPlayerByToken } = require("./player");
 
 const authUsingToken = (game, token, socket) => {
-    if (token == undefined || token == null || token == "") {
+    if (token == undefined || token == null || token === "") {
         return false;
     }
     const player = findPlayerByToken(game, token);

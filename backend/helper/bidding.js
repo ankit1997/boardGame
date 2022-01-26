@@ -1,5 +1,36 @@
 const { sendError, sendGameObjToPlayers } = require("./comms");
 
+const initializeBidding = (game) => {
+    game.boardState.stage = "BIDDING";
+
+    game.boardState.bids.forEach((bid) => {
+        bid.maxBidAmount = undefined;
+        bid.maxBidPlayerId = undefined;
+    });
+    shuffle(game.boardState.bids);
+
+    if (
+        game.boardState.nextTurnOrder &&
+        game.boardState.nextTurnOrder.length != 0
+    ) {
+        game.boardState.turnOrder = game.boardState.nextTurnOrder.reverse();
+    } else {
+        game.boardState.turnOrder = shuffle([...Array(game.numPlayers).keys()]);
+    }
+    game.boardState.nextTurnOrder = [];
+    game.boardState.turn = game.boardState.turnOrder[0];
+
+    game.players[bid.maxBidPlayerId].soldiersAdded = 0;
+    game.players[bid.maxBidPlayerId].shipsAdded = 0;
+    game.players[bid.maxBidPlayerId].portsAdded = 0;
+    game.players[bid.maxBidPlayerId].fortsAdded = 0;
+    game.players[bid.maxBidPlayerId].universitiesAdded = 0;
+    game.players[bid.maxBidPlayerId].templesAdded = 0;
+    game.players[bid.maxBidPlayerId].metropolitansAdded = 0;
+
+    game.logs.push("Started bid process");
+};
+
 const placeBid = (game, god, amount, playerId) => {
     if (game.boardState.stage != "BIDDING") return;
 
@@ -100,4 +131,5 @@ const endbiddings = (game) => {
     };
 };
 
+exports.initializeBidding = initializeBidding;
 exports.placeBid = placeBid;
