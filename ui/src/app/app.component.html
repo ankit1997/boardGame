@@ -36,6 +36,7 @@
       <input
         type="text"
         pInputText
+        (keyup)="$event.keyCode == 13 ? joinGame() : null"
         style="max-width: 200px"
         [(ngModel)]="properties.gameId"
       />
@@ -48,6 +49,7 @@
         <input
           type="text"
           pInputText
+          (keyup)="$event.keyCode == 13 ? joinGame() : null"
           placeholder="Enter this"
           style="max-width: 200px"
           [(ngModel)]="playerState.name"
@@ -61,6 +63,7 @@
         <input
           type="text"
           pInputText
+          (keyup)="$event.keyCode == 13 ? joinGame() : null"
           placeholder="or this"
           style="max-width: 200px"
           [(ngModel)]="playerState.token"
@@ -369,6 +372,19 @@
               playerState.gold > playerState.soldiersAdded
             "
           ></p-button>
+        </div>
+        <div *ngIf="playerState.prevBidGod == 'APOLLO'"></div>
+        <p-button
+          styleClass="p-button-outlined p-button-success"
+          label="Done"
+          (onClick)="completeAction()"
+        ></p-button>
+      </p-accordionTab>
+      <p-accordionTab header="Help" [selected]="false">
+        <div class="p-grid" style="margin-top: 5px">
+          <div class="p-col">
+            <img src="assets/images/help/godActions.jpg" />
+          </div>
         </div>
       </p-accordionTab>
     </p-accordion>

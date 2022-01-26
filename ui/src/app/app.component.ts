@@ -93,6 +93,7 @@ export class AppComponent implements OnInit {
     });
     //
     this.backendService.socket.on('boardState', (board: any) => {
+      console.log(board);
       this.set_properties(board);
     });
   }
@@ -242,8 +243,10 @@ export class AppComponent implements OnInit {
     this.playerState = response.players[playerId];
 
     if (!this.gameInitialized) {
+      this.onInitialization();
       this.start();
     } else if (boardState.stage == 'SETUP') {
+      this.onInitialization();
       this.setup_board();
     } else {
       this.update_board();
@@ -299,6 +302,14 @@ export class AppComponent implements OnInit {
 
     this.app.renderer.view.addEventListener('click', (e) => {
       //
+      if (window.scrollY !== 0) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Please scroll to the top before clicking on board',
+        });
+        return;
+      }
       // During setup stage, update the board
       if (this.properties.boardState.stage == 'SETUP') {
         // get block at the clicked location
@@ -593,6 +604,12 @@ export class AppComponent implements OnInit {
     );
     this.numPlayers++;
     console.log(this.properties.playersInfo);
+  }
+
+  completeAction() {
+    this.backendService.action(this.properties.gameId, {
+      endTurn: true,
+    });
   }
 
   copyToClipboard(text: string) {

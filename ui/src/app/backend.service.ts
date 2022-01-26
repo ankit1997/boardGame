@@ -29,4 +29,8 @@ export class BackendService {
   placeBid(gameId: string, god: string, amount: number) {
     this.socket.emit('placeBid', gameId, god, amount);
   }
+
+  action(gameId: string, actionObj: any) {
+    this.socket.emit('action', gameId, actionObj);
+  }
 }

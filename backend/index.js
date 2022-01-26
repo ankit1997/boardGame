@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
+const { endTurn } = require("./Actions");
 const { getGame, getNewGame, groupLand, saveBoard } = require("./Game");
 const { authUsingToken, authUsingName } = require("./helper/auth");
 const { placeBid } = require("./helper/bidding");
@@ -155,8 +156,18 @@ io.on("connection", (socket) => {
 
     socket.on("action", (gameId, actionObj) => {
         if (!verify(socket)) return;
+
         const game = getGame(gameId);
-        if (game.boardState.stage != "ACTION") return;
+        const playerId = socket["userData"]["id"];
+
+        if (game.boardState.stage != "ACTION" || !actionObj) return;
+        if (game.boardState.turn != playerId) return;
+
+        if (actionObj.endTurn == true) {
+            endTurn(game, playerId);
+            return;
+        }
+
         /* 
         
         code @moga

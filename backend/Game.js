@@ -159,7 +159,7 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     for (let player of playersInfo) {
         game.playersAuth[player.id] = {
             joined: false,
-            token: uuidv4(),
+            token: player.name, // TODO: change this to uuidv4() after testing is done
             socketId: undefined,
         };
     }
@@ -223,8 +223,9 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     ];
     game.creatures_open = {};
     game.boardState = {
-        stage: "SETUP",
+        stage: "SETUP", // possible values are 'SETUP', 'BIDDING', 'ACTION'
         turnOrder: shuffle([...Array(playersInfo.length).keys()]),
+        nextTurnOrder: [],
         turn: -1,
         blockList: [],
         bids: [
@@ -259,6 +260,8 @@ const getNewGame = (gameId, width, height, playersInfo) => {
                 : board,
     };
     game.boardState.turn = game.boardState.turnOrder[0];
+    game.logs = [];
+
     shuffle(game.boardState.bids);
     groupLand(game);
 
