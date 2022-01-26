@@ -48,6 +48,8 @@ const placeBid = (game, god, amount, playerId) => {
                 );
             })[0];
         }
+
+        game.logs.push(game.players[playerId].name + " placed bid on " + god);
     }
     sendGameObjToPlayers(game);
 };
@@ -66,6 +68,8 @@ const biddingsDone = (game) => {
                   );
         game.players[bid.maxBidPlayerId].gold -= amountToBePaid;
         game.gold += amountToBePaid;
+
+        // after bidding is done, reset current turn variables
         game.players[bid.maxBidPlayerId].soldiersAdded = 0;
         game.players[bid.maxBidPlayerId].shipsAdded = 0;
         game.players[bid.maxBidPlayerId].portsAdded = 0;
@@ -73,6 +77,7 @@ const biddingsDone = (game) => {
         game.players[bid.maxBidPlayerId].universitiesAdded = 0;
         game.players[bid.maxBidPlayerId].templesAdded = 0;
         game.players[bid.maxBidPlayerId].metropolitansAdded = 0;
+
         turnOrder.push(bid.maxBidPlayerId);
     }
     game.boardState.turnOrder = turnOrder;

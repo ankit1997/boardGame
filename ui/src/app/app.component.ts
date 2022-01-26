@@ -595,6 +595,12 @@ export class AppComponent implements OnInit {
     console.log(this.properties.playersInfo);
   }
 
+  completeAction() {
+    this.backendService.action(this.properties.gameId, {
+      endTurn: true,
+    });
+  }
+
   copyToClipboard(text: string) {
     navigator.clipboard.writeText(text);
   }
