@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-const { endTurn } = require("./Actions");
+const { endTurn, placePlayerSoldier } = require("./Actions");
 const { getGame, getNewGame, groupLand, saveBoard } = require("./Game");
 const { authUsingToken, authUsingName } = require("./helper/auth");
 const { placeBid } = require("./helper/bidding");
@@ -167,25 +167,38 @@ io.on("connection", (socket) => {
             endTurn(game, playerId);
             return;
         }
-
-        /* 
-        
-        code @moga
-            socket["userData"]["id"] - for user's id
-            actionObj = {
-                endTurn: boolean,
-                soldierBlockId: number,
-                shipBlockId: number,
-                fortBlockId: number,
-                portBlockId: number,
-                templeBlockId: number,
-                universityBlockId: number,
-                metropolitanBlockId: number,
-                creature: {
-                    // not implemented yet but this will contain creatureId and other fields to perform creature action sent from UI
-                }
+        else if (actionObj.soldierBlockId >=0) {
+            placePlayerSoldier(game,playerId, actionObj.soldierBlockId)
+        }
+        else if (actionObj.shipBlockId >=0) {
+            placePlayerShip(game,playerId, actionObj.shipBlockId)
+        }
+        else if (actionObj.fortressBlockId >=0) {
+            placePlayerFortress(game,playerId, actionObj.fortressBlockId)
+        }
+        else if (actionObj.templeBlockId >=0) {
+            placePlayerTemple(game,playerId, actionObj.templeBlockId)
+        }
+        else if (actionObj.portBlockId >=0) {
+            placePlayerPort(game,playerId, actionObj.portBlockId)
+        }
+        /*actionObj = {
+            endTurn: boolean,
+            soldierBlockId: number,
+            shipBlockId: number,
+            fortBlockId: number,
+            portBlockId: number,
+            templeBlockId: number,
+            universityBlockId: number,
+            metropolitanBlockId: number,
+            creature: {
+                // not implemented yet but this will contain creatureId and other fields to perform creature action sent from UI
             }
 
+
+
+        }
+            /*
             Things to consider:
             - add functions in separate files if necessary, don't write all code here in this place (block.js)
             - piece is added in correct block type (e.g. ship in 'sea' only, temple in 'land' only, etc.)

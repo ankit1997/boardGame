@@ -188,7 +188,9 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             soldiersAdded: 0,
             shipsAdded: 0,
             portsAdded: 0,
-            fortsAdded: 0,
+            fortressAdded: 0,
+            priestsAdded: 0,
+            philposphersAdded: 0,
             universitiesAdded: 0,
             templesAdded: 0,
             metropolitansAdded: 0,
@@ -201,6 +203,11 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     game.priests = 18;
     game.philosophers = 17;
     game.soldiers = 40;
+    game.fortress = 10;
+    game.temples = 10;
+    game.ports = 10;
+    game.universities = 10;
+    game.metropolitan = 10;
     game.ships = 40;
     game.creatures_pile = [
         "CHIMERA",

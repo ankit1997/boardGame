@@ -104,9 +104,11 @@ const biddingsDone = (game) => {
         game.players[bid.maxBidPlayerId].soldiersAdded = 0;
         game.players[bid.maxBidPlayerId].shipsAdded = 0;
         game.players[bid.maxBidPlayerId].portsAdded = 0;
-        game.players[bid.maxBidPlayerId].fortsAdded = 0;
+        game.players[bid.maxBidPlayerId].fortressAdded = 0;
         game.players[bid.maxBidPlayerId].universitiesAdded = 0;
         game.players[bid.maxBidPlayerId].templesAdded = 0;
+        game.players[bid.maxBidPlayerId].priestsAdded = 0;
+        game.players[bid.maxBidPlayerId].philosphersAdded = 0;
         game.players[bid.maxBidPlayerId].metropolitansAdded = 0;
 
         turnOrder.push(bid.maxBidPlayerId);
@@ -116,20 +118,25 @@ const biddingsDone = (game) => {
     game.boardState.stage = "ACTION";
 };
 
+
 const endbiddings = (game) => {
     const biddingendforzeus = (game, playerId) => {
         game.player[playerId].priests++;
+        priestsBought
     };
     const biddingendforposeidon = (game, playerId) => {
         game.player[playerId].ships++;
     };
     const biddingendforares = (game, playerId) => {
-        game.player[playerId].soldiers++;
+        //soldierBlockId = fetch Here make it actionObj
+        //pass it from here.
+        //Sending Action obj from here?
     };
     const biddingendforathena = (game, playerId) => {
-        game.player[playerId].philosphers++;
+        //game.player[playerId].philosphers++;
     };
 };
+
 
 exports.initializeBidding = initializeBidding;
 exports.placeBid = placeBid;

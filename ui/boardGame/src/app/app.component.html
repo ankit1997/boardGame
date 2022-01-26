@@ -36,7 +36,6 @@
       <input
         type="text"
         pInputText
-        (keyup)="$event.keyCode == 13 ? joinGame() : null"
         style="max-width: 200px"
         [(ngModel)]="properties.gameId"
       />
@@ -49,7 +48,6 @@
         <input
           type="text"
           pInputText
-          (keyup)="$event.keyCode == 13 ? joinGame() : null"
           placeholder="Enter this"
           style="max-width: 200px"
           [(ngModel)]="playerState.name"
@@ -63,7 +61,6 @@
         <input
           type="text"
           pInputText
-          (keyup)="$event.keyCode == 13 ? joinGame() : null"
           placeholder="or this"
           style="max-width: 200px"
           [(ngModel)]="playerState.token"
@@ -349,70 +346,12 @@
           properties.boardState.turn == playerState.id
         "
       >
-        <div *ngIf="playerState.prevBidGod == 'ARES'">
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Add soldier"
-            (onClick)="placingSoldier = true"
-            *ngIf="
-              playerState.soldiersAdded == 0 ||
-              playerState.gold > playerState.soldiersAdded
-            "
-          ></p-button>
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Add Fortress"
-            (onClick)="placingFortress = true"
-            *ngIf="
-              playerState.FortressAdded == 0 ||
-              playerState.gold > playerState.FortressAdded
-            "
-          ></p-button>
-        </div>
+        <div *ngIf="playerState.prevBidGod == 'ARES'"></div>
+        
         <div *ngIf="playerState.prevBidGod == 'ATHENA'"></div>
         <div *ngIf="playerState.prevBidGod == 'ZEUS'"></div>
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Add Temple"
-            (onClick)="placingTemple = true"
-            *ngIf="
-              playerState.templesAdded == 0 ||
-              playerState.gold > playerState.templesAdded
-            "
-          ></p-button>
-        <div *ngIf="playerState.prevBidGod == 'POSEIDON'">
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Add ship"
-            (onClick)="placingShip = true"
-            *ngIf="
-              playerState.shipsAdded == 0 ||
-              playerState.gold > playerState.shipsAdded
-            "
-          ></p-button>
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Add Port"
-            (onClick)="placingPort = true"
-            *ngIf="
-              playerState.portsAdded == 0 ||
-              playerState.gold > playerState.portsAdded
-            "
-          ></p-button>
-        </div>
+        <div *ngIf="playerState.prevBidGod == 'POSEIDON'"></div>
         <div *ngIf="playerState.prevBidGod == 'APOLLO'"></div>
-        <p-button
-          styleClass="p-button-outlined p-button-success"
-          label="Done"
-          (onClick)="completeAction()"
-        ></p-button>
-      </p-accordionTab>
-      <p-accordionTab header="Help" [selected]="false">
-        <div class="p-grid" style="margin-top: 5px">
-          <div class="p-col">
-            <img src="assets/images/help/godActions.jpg" />
-          </div>
-        </div>
       </p-accordionTab>
     </p-accordion>
   </div>

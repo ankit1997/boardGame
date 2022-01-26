@@ -24,4 +24,45 @@ const endTurn = (game, playerId) => {
     sendGameObjToPlayers(game);
 };
 
+const placePlayerSoldier = (game, playerId, soldierBlockId) => {
+    addSoldier(game, block[soldierBlockId], playerId);
+    const player = game.players[playerId];
+    player.gold -= player.soldiersAdded;
+    player.soldiersAdded++;
+    sendGameObjToPlayers(game);
+}
+const placePlayerShip = (game, playerId, shipBlockId) => {
+    addShip(game, block[shipBlockId], playerId);
+    const player = game.players[playerId];
+    player.gold -= player.shipsAdded;
+    player.shipsAdded++;
+    sendGameObjToPlayers(game);
+}
+const placePlayerFortress = (game,  playerId, fortressBlockId) => {
+    addFortress(game, block[fortressBlockId], playerId);
+    const player = game.players[playerId];
+    player.gold -= player.fortressAdded;
+    player.fortressAdded++;
+    sendGameObjToPlayers(game);
+}
+
+const placePlayerTemple = (game, playerId, templeBlockId) => {
+    addTemple(game, block[templeBlockId], playerId);
+    const player = game.players[playerId];
+    player.gold -= player.templesAdded;
+    player.templesAdded++;
+    sendGameObjToPlayers(game);
+}
+
+const placePlayerPort = (game,playerId, portBlockId) => {
+    addPort(game, block[portBlockId], playerId);
+    const player = game.players[playerId];
+    player.gold -= player.portsAdded;
+    player.portsAdded++;
+    sendGameObjToPlayers(game);
+}
+
+
 exports.endTurn = endTurn;
+exports.placePlayerSoldier = placePlayerSoldier;
+exports.placePlayerShip = placePlayerShip;
