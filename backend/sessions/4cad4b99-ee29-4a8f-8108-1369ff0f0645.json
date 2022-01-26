@@ -35,27 +35,27 @@
     "0": {
       "joined": true,
       "token": "0",
-      "socketId": "pn-7JQ0d8kLtptYNAAAL"
+      "socketId": "r5BBRUnnnYATnxDVAAAG"
     },
     "1": {
       "joined": true,
       "token": "1",
-      "socketId": "yn_hnkcMHbhWmqOYAAAF"
+      "socketId": "8hmIs0va5rv4mGW_AAAL"
     },
     "2": {
       "joined": true,
       "token": "2",
-      "socketId": "C6b28dUG_wsTI601AAAG"
+      "socketId": "9rHa7GlJQ9vmZNOMAAAN"
     },
     "3": {
       "joined": true,
       "token": "3",
-      "socketId": "sJReZ_cDQwh0T2J5AAAJ"
+      "socketId": "v5UZFCFf0N1PRe25AAAH"
     },
     "4": {
       "joined": true,
       "token": "4",
-      "socketId": "t3n3iVB4ISMkqjn6AAAI"
+      "socketId": "366Bx6b4GING_iEqAAAN"
     }
   },
   "players": {
@@ -199,7 +199,7 @@
   ],
   "creatures_open": {},
   "boardState": {
-    "stage": "ACTION",
+    "stage": "BIDDING",
     "turnOrder": [
       2,
       0,
@@ -207,7 +207,7 @@
       3,
       1
     ],
-    "turn": 2,
+    "turn": 1,
     "blockList": [],
     "bids": [
       {
@@ -1298,5 +1298,17 @@
         }
       ]
     }
-  }
+  },
+  "logs": [
+    "Shivam action turn completed",
+    "Shivam action turn completed",
+    "Starting bid process",
+    "Shivam action turn completed",
+    "Starting bid process",
+    "Ankit action turn completed",
+    "Vibhor action turn completed",
+    "Priyam action turn completed",
+    "Shivam action turn completed",
+    "Starting bid process"
+  ]
 }

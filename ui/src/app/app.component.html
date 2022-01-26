@@ -370,13 +370,12 @@
             "
           ></p-button>
         </div>
-        <div *ngIf="playerState.prevBidGod == 'APOLLO'">
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Done"
-            (onClick)="completeAction()"
-          ></p-button>
-        </div>
+        <div *ngIf="playerState.prevBidGod == 'APOLLO'"></div>
+        <p-button
+          styleClass="p-button-outlined p-button-success"
+          label="Done"
+          (onClick)="completeAction()"
+        ></p-button>
       </p-accordionTab>
     </p-accordion>
   </div>
