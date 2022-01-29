@@ -170,7 +170,6 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             id: player.id,
             name: player.name,
             color: player.color,
-            prevBidGod: undefined,
             gold: startGold,
             prosperity_markers: 0,
             priests: 0,
@@ -185,6 +184,7 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             metropolitan: 0,
             creatures: [],
             // below are stuff added in current user turn
+            prevBidGod: undefined,
             soldiersAdded: 0,
             shipsAdded: 0,
             portsAdded: 0,
@@ -276,12 +276,12 @@ const saveBoard = (board, numPlayers) => {
 
 const saveGame = (game) => {
     const str = JSON.stringify(game, null, 2);
-    const fname = "sessions/" + game.gameId + ".json";
+    const fname = getGamePath(game.gameId);
     fs.writeFileSync(fname, str);
 };
 
 const getGame = (gameId) => {
-    const fname = "sessions/" + gameId + ".json";
+    const fname = getGamePath(gameId);
     return JSON.parse(
         fs.readFileSync(fname, {
             encoding: "utf8",
@@ -290,8 +290,13 @@ const getGame = (gameId) => {
     );
 };
 
+const getGamePath = (gameId) => {
+    return "sessions/" + gameId + ".json";
+};
+
 exports.groupLand = groupLand;
 exports.getNewGame = getNewGame;
 exports.saveBoard = saveBoard;
 exports.saveGame = saveGame;
 exports.getGame = getGame;
+exports.getGamePath = getGamePath;

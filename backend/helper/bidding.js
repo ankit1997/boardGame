@@ -1,9 +1,19 @@
+const { beginActionTurn } = require("../Actions");
+const { shuffle } = require("../utils");
 const { sendError, sendGameObjToPlayers } = require("./comms");
 
 const initializeBidding = (game) => {
     game.boardState.stage = "BIDDING";
 
     game.boardState.bids.forEach((bid) => {
+        game.players[bid.maxBidPlayerId].prevBidGod = undefined;
+        game.players[bid.maxBidPlayerId].soldiersAdded = 0;
+        game.players[bid.maxBidPlayerId].shipsAdded = 0;
+        game.players[bid.maxBidPlayerId].portsAdded = 0;
+        game.players[bid.maxBidPlayerId].fortsAdded = 0;
+        game.players[bid.maxBidPlayerId].universitiesAdded = 0;
+        game.players[bid.maxBidPlayerId].templesAdded = 0;
+        game.players[bid.maxBidPlayerId].metropolitansAdded = 0;
         bid.maxBidAmount = undefined;
         bid.maxBidPlayerId = undefined;
     });
@@ -19,14 +29,6 @@ const initializeBidding = (game) => {
     }
     game.boardState.nextTurnOrder = [];
     game.boardState.turn = game.boardState.turnOrder[0];
-
-    game.players[bid.maxBidPlayerId].soldiersAdded = 0;
-    game.players[bid.maxBidPlayerId].shipsAdded = 0;
-    game.players[bid.maxBidPlayerId].portsAdded = 0;
-    game.players[bid.maxBidPlayerId].fortsAdded = 0;
-    game.players[bid.maxBidPlayerId].universitiesAdded = 0;
-    game.players[bid.maxBidPlayerId].templesAdded = 0;
-    game.players[bid.maxBidPlayerId].metropolitansAdded = 0;
 
     game.logs.push("Started bid process");
 };
@@ -82,10 +84,13 @@ const placeBid = (game, god, amount, playerId) => {
 
         game.logs.push(game.players[playerId].name + " placed bid on " + god);
     }
+
     sendGameObjToPlayers(game);
 };
 
 const biddingsDone = (game) => {
+    if (game.boardState.stage != "BIDDING") return;
+
     const turnOrder = [];
     for (let bid of game.boardState.bids) {
         if (bid.maxBidPlayerId == undefined) continue;
@@ -114,6 +119,7 @@ const biddingsDone = (game) => {
     game.boardState.turnOrder = turnOrder;
     game.boardState.turn = turnOrder[0];
     game.boardState.stage = "ACTION";
+    beginActionTurn(game, game.boardState.turn);
 };
 
 const endbiddings = (game) => {

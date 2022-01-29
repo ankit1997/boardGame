@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
   public cardHeight: number = 90;
   public currentBid: Bid = new Bid();
   public GODS = God;
+  public doneCounter: number;
 
   public COLORS = ['red', 'yellow', 'green', 'blue', 'black'];
   public COLOR_DOTS = {
@@ -95,7 +96,9 @@ export class AppComponent implements OnInit {
     });
     //
     this.backendService.socket.on('boardState', (board: any) => {
-      this.set_properties(board);
+      this.doneCounter = 0;
+      console.log(board);
+      this.setProperties(board);
     });
   }
 
@@ -217,7 +220,7 @@ export class AppComponent implements OnInit {
     );
   }
 
-  set_properties(response: any) {
+  setProperties(response: any) {
     this.properties = new Properties(response.numPlayers);
     this.properties.gameId = response.gameId;
     this.properties.creator = response.creator;
@@ -235,6 +238,7 @@ export class AppComponent implements OnInit {
     this.properties.philosophers = response.philosophers;
     this.properties.soldiers = response.soldiers;
     this.properties.ships = response.ships;
+    this.properties.logs = response.logs;
 
     const boardState = new BoardState();
     boardState.stage = response.boardState.stage;
@@ -310,15 +314,10 @@ export class AppComponent implements OnInit {
 
         if (this.setupAction == 'LAND') {
           // mark block as land
-          this.backendService.setup(
-            this.properties.gameId,
-            block.id,
-            'LAND',
-            undefined
-          );
+          this.backendService.setup(block.id, 'LAND', undefined);
         } else if (this.setupAction == 'SEA') {
           // mark block as sea
-          this.backendService.setup(this.properties.gameId, block.id, 'SEA', {
+          this.backendService.setup(block.id, 'SEA', {
             numProsperityMarkers: this.numProsperityMarkers,
           });
         } else if (
@@ -358,7 +357,7 @@ export class AppComponent implements OnInit {
             }
           }
           if (Object.keys(obj).length != 0) {
-            this.backendService.action(this.properties.gameId, obj);
+            this.backendService.action(obj);
           }
 
           this.placingBuilding = '';
@@ -379,17 +378,17 @@ export class AppComponent implements OnInit {
       obj['ships'] = this.placingShip ? 1 : 0;
     }
 
-    this.backendService.setup(this.properties.gameId, block.id, 'PLAYER', obj);
+    this.backendService.setup(block.id, 'PLAYER', obj);
   }
 
   placeSoldier(block: Block) {
-    this.backendService.action(this.properties.gameId, {
+    this.backendService.action({
       soldierBlockId: block.id,
     });
   }
 
   placeShip(block: Block) {
-    this.backendService.action(this.properties.gameId, {
+    this.backendService.action({
       shipBlockId: block.id,
     });
   }
@@ -536,13 +535,7 @@ export class AppComponent implements OnInit {
   }
 
   finishSetup(saveFlag: boolean = false) {
-    this.backendService.setup(
-      this.properties.gameId,
-      undefined,
-      undefined,
-      { save: saveFlag },
-      true
-    );
+    this.backendService.setup(undefined, undefined, { save: saveFlag }, true);
   }
 
   getBlockAtXY(x: number, y: number): Block {
@@ -586,9 +579,14 @@ export class AppComponent implements OnInit {
   }
 
   completeAction() {
-    this.backendService.action(this.properties.gameId, {
-      endTurn: true,
-    });
+    if (this.doneCounter < 3) {
+      this.doneCounter++; // user has to click "done" few number of times to confirm
+    } else {
+      this.backendService.action({
+        endTurn: true,
+      });
+      this.doneCounter = 0;
+    }
   }
 
   copyToClipboard(text: string) {

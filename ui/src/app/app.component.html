@@ -86,7 +86,11 @@
 
 <div class="p-grid">
   <div class="p-col" id="board"></div>
-  <div class="p-col" style="margin-top: 15px" *ngIf="gameInitialized">
+  <div
+    class="p-col"
+    style="margin-top: 15px"
+    *ngIf="gameInitialized && properties && properties.boardState"
+  >
     <div class="p-grid" style="margin-top: 5px">
       <div
         class="p-d-flex p-ai-center"
@@ -351,7 +355,7 @@
         </div>
       </p-accordionTab>
       <p-accordionTab
-        header="Action"
+        header="Action ({{ playerState.prevBidGod }})"
         *ngIf="
           properties.boardState.stage == 'ACTION' &&
           properties.boardState.turn == playerState.id
@@ -404,7 +408,7 @@
         <div style="margin: 5px; display: inline-block">
           <p-button
             styleClass="p-button-primary"
-            label="Done"
+            label="Done ({{ doneCounter }}/3)"
             (onClick)="completeAction()"
           ></p-button>
         </div>
@@ -414,6 +418,15 @@
           <div class="p-col">
             <img src="assets/images/help/godActions.jpg" />
           </div>
+        </div>
+      </p-accordionTab>
+      <p-accordionTab header="Logs" [selected]="false">
+        <div style="margin-top: 5px">
+          <p-scrollPanel [style]="{ width: '100%', height: '250px' }">
+            <p *ngFor="let log of properties.logs; let idx = index">
+              <strong>{{ idx + 1 }})</strong> {{ log }}
+            </p>
+          </p-scrollPanel>
         </div>
       </p-accordionTab>
     </p-accordion>

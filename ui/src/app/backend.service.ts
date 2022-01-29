@@ -16,21 +16,15 @@ export class BackendService {
     this.socket.emit('authenticate', gameId, name, token);
   }
 
-  setup(
-    gameId: string,
-    blockId: number,
-    marker: string,
-    obj: any,
-    completeFlag?: boolean
-  ) {
-    this.socket.emit('setup', gameId, blockId, marker, obj, completeFlag);
+  setup(blockId: number, marker: string, obj: any, completeFlag?: boolean) {
+    this.socket.emit('setup', blockId, marker, obj, completeFlag);
   }
 
-  placeBid(gameId: string, god: string, amount: number) {
-    this.socket.emit('placeBid', gameId, god, amount);
+  placeBid(god: string, amount: number) {
+    this.socket.emit('placeBid', god, amount);
   }
 
-  action(gameId: string, actionObj: any) {
-    this.socket.emit('action', gameId, actionObj);
+  action(actionObj: any) {
+    this.socket.emit('action', actionObj);
   }
 }

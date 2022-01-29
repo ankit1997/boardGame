@@ -58,7 +58,6 @@ export class Bidding {
       return;
     }
     app.backendService.placeBid(
-      app.properties.gameId,
       app.currentBid.god,
       app.currentBid.maxBidAmount
     );
