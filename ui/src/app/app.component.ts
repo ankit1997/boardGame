@@ -6,6 +6,7 @@ import { Block, LandBlock, SeaBlock } from './Block';
 import { Bid, BoardState, God } from './BoardState';
 import { Piece } from './Piece';
 import { Properties } from './Properties';
+import { Bidding } from './utilities/Bidding';
 
 // Aliases
 const loader = Loader;
@@ -19,10 +20,10 @@ const resources = Loader.shared.resources;
 })
 export class AppComponent implements OnInit {
   public gameInitialized: boolean = false;
-  private app: Application;
+  public app: Application;
   public properties: Properties;
-  private graphics = new Graphics();
-  private blockList: any[] = [];
+  public graphics = new Graphics();
+  public blockList: any[] = [];
   public playerState: PlayerState = new PlayerState();
   public cardWidth: number = 70;
   public cardHeight: number = 90;
@@ -38,19 +39,20 @@ export class AppComponent implements OnInit {
     black: '⚫',
   };
 
-  private numPlayers = 0;
+  public numPlayers = 0;
   public numProsperityMarkers: number = 0;
   public setupAction: string = 'LAND';
   public setupBtnLabel: string = 'Mark Land';
   public setActionMenu: any[] = [];
   public placingSoldier: boolean = false;
   public placingShip: boolean = false;
+  public placingBuilding: string = '';
 
   public selectedMarker: any;
 
   constructor(
-    private messageService: MessageService,
-    private backendService: BackendService
+    public messageService: MessageService,
+    public backendService: BackendService
   ) {}
 
   ngOnInit(): void {
@@ -93,12 +95,29 @@ export class AppComponent implements OnInit {
     });
     //
     this.backendService.socket.on('boardState', (board: any) => {
-      console.log(board);
       this.set_properties(board);
     });
   }
 
-  initialize_game() {
+  initializeGame() {
+    this.validateGame();
+    if (this.properties.playersInfo.length < 4) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Minimum 4 players required',
+      });
+      return;
+    }
+    this.backendService.initialize(
+      this.properties.width,
+      this.properties.height,
+      this.properties.playersInfo
+    );
+    this.onInitialization();
+  }
+
+  validateGame() {
     if (
       this.properties.playersInfo.find(
         (playerInfo: PlayerInfo) =>
@@ -114,20 +133,6 @@ export class AppComponent implements OnInit {
       });
       return;
     }
-    if (this.properties.playersInfo.length < 4) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Minimum 4 players required',
-      });
-      return;
-    }
-    this.backendService.initialize(
-      this.properties.width,
-      this.properties.height,
-      this.properties.playersInfo
-    );
-    this.onInitialization();
   }
 
   onInitialization() {
@@ -249,26 +254,12 @@ export class AppComponent implements OnInit {
       this.onInitialization();
       this.setup_board();
     } else {
-      this.update_board();
+      this.updateBoard();
     }
   }
 
   start() {
-    if (
-      this.properties.playersInfo.find(
-        (playerInfo: PlayerInfo) =>
-          playerInfo.name == null ||
-          playerInfo.name == undefined ||
-          playerInfo.name == ''
-      ) != undefined
-    ) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Provide name',
-      });
-      return;
-    }
+    this.validateGame();
 
     this.gameInitialized = true;
 
@@ -297,6 +288,7 @@ export class AppComponent implements OnInit {
         'assets/images/black/soldier.png',
         'assets/images/prosperity_marker.png',
         'assets/images/dotted_square.png',
+        'assets/images/fort.png',
       ])
       .load(this.setup_board.bind(this));
 
@@ -340,15 +332,43 @@ export class AppComponent implements OnInit {
           this.addSoldierOrShip(playerInfo.id, block);
         }
       } else if (this.properties.boardState.stage == 'ACTION') {
-        if (this.placingSoldier || this.placingShip) {
-          const block = this.getBlockAtXY(e.x, e.y);
-          this.addSoldierOrShip(this.playerState.id, block);
+        const block: Block = this.getBlockAtXY(e.x, e.y);
+        if (this.placingSoldier) {
+          this.placeSoldier(block);
+        } else if (this.placingShip) {
+          this.placeShip(block);
+        } else if (this.placingBuilding != '') {
+          let obj = {};
+          switch (this.placingBuilding) {
+            case 'FORT': {
+              obj['fortBlockId'] = block.id;
+              break;
+            }
+            case 'PORT': {
+              obj['portBlockId'] = block.id;
+              break;
+            }
+            case 'TEMPLE': {
+              obj['templeBlockId'] = block.id;
+              break;
+            }
+            case 'UNIVERSITY': {
+              obj['universityBlockId'] = block.id;
+              break;
+            }
+          }
+          if (Object.keys(obj).length != 0) {
+            this.backendService.action(this.properties.gameId, obj);
+          }
+
+          this.placingBuilding = '';
         }
       }
     });
   }
 
   addSoldierOrShip(playerId, block) {
+    // called during setup stage
     const obj = {
       playerId: playerId,
     };
@@ -360,6 +380,18 @@ export class AppComponent implements OnInit {
     }
 
     this.backendService.setup(this.properties.gameId, block.id, 'PLAYER', obj);
+  }
+
+  placeSoldier(block: Block) {
+    this.backendService.action(this.properties.gameId, {
+      soldierBlockId: block.id,
+    });
+  }
+
+  placeShip(block: Block) {
+    this.backendService.action(this.properties.gameId, {
+      shipBlockId: block.id,
+    });
   }
 
   process_step() {
@@ -452,9 +484,10 @@ export class AppComponent implements OnInit {
     }
   }
 
-  update_board() {
+  updateBoard() {
     for (let block of this.properties.boardState.board.blocks) {
       const blockObj = this.blockList[block.id];
+
       if (blockObj == undefined) continue;
 
       // 1> update prosperity markers
@@ -492,6 +525,13 @@ export class AppComponent implements OnInit {
         }
         // const color = this.properties.players[blockObj.owner].color;
       }
+
+      // 4> update buildings
+      if (blockObj.type == 'land') {
+        const landBlockObj: LandBlock = blockObj;
+        if (landBlockObj.numForts != block.numForts) {
+        }
+      }
     }
   }
 
@@ -516,66 +556,11 @@ export class AppComponent implements OnInit {
   }
 
   placeBid(oldBid: Bid) {
-    // bid validations
-    if (this.properties.boardState.turn != this.playerState.id) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Cannot bid, invalid turn',
-      });
-      return;
-    }
-    if (
-      this.currentBid.maxBidAmount == undefined ||
-      this.currentBid.maxBidAmount == null ||
-      this.currentBid.maxBidAmount <= 0
-    ) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No bid provided',
-      });
-      return;
-    }
-    if (
-      oldBid.maxBidAmount != undefined &&
-      this.currentBid.maxBidAmount <= oldBid.maxBidAmount
-    ) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Must bid higher than ' + oldBid.maxBidAmount,
-      });
-      return;
-    }
-    if (this.currentBid.maxBidAmount > this.playerState.gold) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Insufficient funds',
-      });
-      return;
-    }
-    if (
-      this.playerState.prevBidGod != null &&
-      this.playerState.prevBidGod != undefined &&
-      this.playerState.prevBidGod == this.currentBid.god
-    ) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Cannot bid again on ' + this.playerState.prevBidGod,
-      });
-      return;
-    }
-    this.backendService.placeBid(
-      this.properties.gameId,
-      this.currentBid.god,
-      this.currentBid.maxBidAmount
-    );
+    Bidding.placeBid(oldBid, this);
   }
 
   addPlayer() {
+    this.validateGame();
     if (this.properties.playersInfo.length >= 5) {
       this.messageService.add({
         severity: 'error',
@@ -584,26 +569,20 @@ export class AppComponent implements OnInit {
       });
       return;
     }
-    if (
-      this.properties.playersInfo.find(
-        (playerInfo: PlayerInfo) =>
-          playerInfo.name == null ||
-          playerInfo.name == undefined ||
-          playerInfo.name == ''
-      ) != undefined
-    ) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Provide name',
-      });
-      return;
-    }
     this.properties.playersInfo.push(
       new PlayerInfo(this.COLORS[this.properties.playersInfo.length])
     );
     this.numPlayers++;
-    console.log(this.properties.playersInfo);
+  }
+
+  removePlayer(color: string) {
+    let ind = this.properties.playersInfo.findIndex(
+      (pi: PlayerInfo) => pi.color == color
+    );
+    if (ind != -1) {
+      this.properties.playersInfo.splice(ind, 1);
+      this.numPlayers--;
+    }
   }
 
   completeAction() {

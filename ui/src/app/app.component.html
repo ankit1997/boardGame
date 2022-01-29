@@ -2,7 +2,6 @@
 
 <div *ngIf="!gameInitialized" style="margin: 5px">
   <h2>Start a game</h2>
-  <span *ngIf="properties.gameId">Game ID: "{{ properties.gameId }}"</span>
   <p>Provide player details below:</p>
   <div
     class="p-inputgroup"
@@ -18,15 +17,24 @@
       [(ngModel)]="item.name"
     />
     <span class="p-inputgroup-addon">
-      <p-button
-        icon="pi pi-plus"
-        styleClass="p-button-sm p-button-secondary"
-        (click)="addPlayer()"
-      ></p-button>
+      <div style="padding: 5px">
+        <p-button
+          icon="pi pi-plus"
+          styleClass="p-button-sm p-button-secondary"
+          (click)="addPlayer()"
+        ></p-button>
+      </div>
+      <div style="padding: 5px">
+        <p-button
+          icon="pi pi-minus"
+          styleClass="p-button-sm p-button-secondary"
+          (click)="removePlayer(item.color)"
+        ></p-button>
+      </div>
     </span>
   </div>
   <div style="margin-top: 10px">
-    <p-button label="Initialize" (onClick)="initialize_game()"></p-button>
+    <p-button label="Initialize" (onClick)="initializeGame()"></p-button>
   </div>
   <hr />
   <h2>Join a game</h2>
@@ -348,37 +356,58 @@
           properties.boardState.stage == 'ACTION' &&
           properties.boardState.turn == playerState.id
         "
+        [selected]="
+          properties.boardState.stage == 'ACTION' &&
+          properties.boardState.turn == playerState.id
+        "
       >
         <div *ngIf="playerState.prevBidGod == 'ARES'">
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Add soldier"
-            (onClick)="placingSoldier = true"
-            *ngIf="
-              playerState.soldiersAdded == 0 ||
-              playerState.gold > playerState.soldiersAdded
-            "
-          ></p-button>
+          <div style="margin: 5px; display: inline-block">
+            <p-button
+              styleClass="p-button-outlined p-button-success"
+              label="Add soldier"
+              (onClick)="placingSoldier = true"
+              *ngIf="
+                playerState.soldiersAdded == 0 ||
+                playerState.gold > playerState.soldiersAdded
+              "
+            ></p-button>
+          </div>
+          <div style="margin: 5px; display: inline-block">
+            <p-button
+              styleClass="p-button-outlined p-button-success"
+              label="Add fort"
+              (onClick)="placingBuilding = 'FORT'"
+              *ngIf="
+                playerState.soldiersAdded == 0 ||
+                playerState.gold > playerState.soldiersAdded
+              "
+            ></p-button>
+          </div>
         </div>
         <div *ngIf="playerState.prevBidGod == 'ATHENA'"></div>
         <div *ngIf="playerState.prevBidGod == 'ZEUS'"></div>
         <div *ngIf="playerState.prevBidGod == 'POSEIDON'">
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Add soldier"
-            (onClick)="placingShip = true"
-            *ngIf="
-              playerState.soldiersAdded == 0 ||
-              playerState.gold > playerState.soldiersAdded
-            "
-          ></p-button>
+          <div style="margin: 5px">
+            <p-button
+              styleClass="p-button-outlined p-button-success"
+              label="Add soldier"
+              (onClick)="placingShip = true"
+              *ngIf="
+                playerState.soldiersAdded == 0 ||
+                playerState.gold > playerState.soldiersAdded
+              "
+            ></p-button>
+          </div>
         </div>
         <div *ngIf="playerState.prevBidGod == 'APOLLO'"></div>
-        <p-button
-          styleClass="p-button-outlined p-button-success"
-          label="Done"
-          (onClick)="completeAction()"
-        ></p-button>
+        <div style="margin: 5px; display: inline-block">
+          <p-button
+            styleClass="p-button-primary"
+            label="Done"
+            (onClick)="completeAction()"
+          ></p-button>
+        </div>
       </p-accordionTab>
       <p-accordionTab header="Help" [selected]="false">
         <div class="p-grid" style="margin-top: 5px">
