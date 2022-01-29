@@ -24,6 +24,21 @@ const endTurn = (game, playerId) => {
     return true;
 };
 
+const earnGold = (game, playerId) => {
+    const earnings = game.boardState.board.blocks
+        .filter(
+            (block) => block.owner == playerId && block.numProsperityMarkers > 0
+        )
+        .map((block) => block.numProsperityMarkers)
+        .reduce((a, b) => a + b, 0);
+    game.players[playerId].gold += earnings;
+    if (earnings > 0) {
+        game.logs.push(
+            game.players[playerId].name + " earned " + earnings + " coins"
+        );
+    }
+};
+
 const beginActionTurn = (game, playerId) => {
     if (game.boardState.stage != "ACTION") return;
 
@@ -60,3 +75,4 @@ const beginActionTurn = (game, playerId) => {
 
 exports.endTurn = endTurn;
 exports.beginActionTurn = beginActionTurn;
+exports.earnGold = earnGold;

@@ -281,7 +281,9 @@
         <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</p>
       </p-accordionTab>
       <p-accordionTab
-        header="Bidding"
+        header="Bidding {{
+          properties.boardState.turn == playerState.id ? '(Your turn)' : ''
+        }}"
         [selected]="properties.boardState.stage == 'BIDDING'"
       >
         <div

@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
-const { endTurn } = require("./Actions");
+const { endTurn, earnGold } = require("./Actions");
 const {
     getGame,
     getNewGame,
@@ -19,27 +19,13 @@ const {
     removeSoldier,
     removeShip,
 } = require("./helper/block");
-const { sendGameObjToPlayers } = require("./helper/comms");
+const { sendGameObjToPlayers, sendGameObjToPlayer } = require("./helper/comms");
 const { io, http } = require("./helper/io");
 
 // load environment variables
 require("dotenv").config();
 
 const port = process.env.SERVER_PORT;
-
-const earnGold = (game) => {
-    for (let playerId in game.players) {
-        const earnings = game.boardState.board.blocks
-            .filter(
-                (block) =>
-                    block.owner == playerId && block.numProsperityMarkers > 0
-            )
-            .map((block) => block.numProsperityMarkers)
-            .reduce((a, b) => a + b, 0);
-        game.players[playerId].gold += earnings;
-    }
-    sendGameObjToPlayers(game);
-};
 
 const verify = (socket) => {
     if (
@@ -203,6 +189,7 @@ io.on("connection", (socket) => {
                         game.boardState.turnOrder.length &&
                     game.boardState.turnOrder.length != 0
                 ) {
+                    earnGold(game, playerId);
                     initializeBidding(game);
                 }
                 sendGameObjToPlayers(game);
