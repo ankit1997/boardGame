@@ -391,8 +391,26 @@
             ></p-button>
           </div>
         </div>
-        <div *ngIf="playerState.prevBidGod == 'ATHENA'"></div>
-        <div *ngIf="playerState.prevBidGod == 'ZEUS'"></div>
+        <div *ngIf="playerState.prevBidGod == 'ATHENA'">
+          <div style="margin: 5px; display: inline-block">
+            <p-button
+              styleClass="p-button-outlined p-button-success"
+              label="Buy Philosopher card (🪙x4) ({{ buyCardCounter }}/3)"
+              (onClick)="buyCard('philosopher')"
+              *ngIf="playerState.gold >= 4"
+            ></p-button>
+          </div>
+        </div>
+        <div *ngIf="playerState.prevBidGod == 'ZEUS'">
+          <div style="margin: 5px; display: inline-block">
+            <p-button
+              styleClass="p-button-outlined p-button-success"
+              label="Buy Priest card (🪙x4) ({{ buyCardCounter }}/3)"
+              (onClick)="buyCard('priest')"
+              *ngIf="playerState.gold >= 4"
+            ></p-button>
+          </div>
+        </div>
         <div *ngIf="playerState.prevBidGod == 'POSEIDON'">
           <div style="margin: 5px">
             <p-button

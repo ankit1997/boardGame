@@ -1,6 +1,6 @@
 const fs = require("fs");
-const { v4: uuidv4 } = require("uuid");
-const { endTurn, earnGold } = require("./Actions");
+const { v4: uuidv4, validate } = require("uuid");
+const { endTurn, earnGold, buyCard } = require("./Actions");
 const {
     getGame,
     getNewGame,
@@ -182,6 +182,7 @@ io.on("connection", (socket) => {
             if (game.boardState.stage != "ACTION" || !actionObj) return;
             if (game.boardState.turn != playerId) return;
 
+            let validAction = false;
             if (actionObj.endTurn == true) {
                 if (
                     endTurn(game, playerId) &&
@@ -192,8 +193,14 @@ io.on("connection", (socket) => {
                     earnGold(game, playerId);
                     initializeBidding(game);
                 }
+                validAction = true;
+            } else if (actionObj.cardName && actionObj.cardName.length > 0) {
+                buyCard(game, playerId, actionObj.cardName);
+                validAction = true;
+            }
+
+            if (validAction) {
                 sendGameObjToPlayers(game);
-                return;
             }
         } catch (err) {
             console.log("Action failure");

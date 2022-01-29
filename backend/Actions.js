@@ -73,6 +73,28 @@ const beginActionTurn = (game, playerId) => {
     }
 };
 
+const buyCard = (game, playerId, cardName) => {
+    switch (cardName) {
+        case "philosopher":
+            if (game.players[playerId].gold >= 4) {
+                game.players[playerId].gold -= 4;
+                game.gold += 4;
+                game.philosophers--;
+                game.players[playerId].philosophers++;
+            }
+            break;
+        case "priest":
+            if (game.players[playerId].gold >= 4) {
+                game.players[playerId].gold -= 4;
+                game.gold += 4;
+                game.priests--;
+                game.players[playerId].priests++;
+            }
+            break;
+    }
+};
+
 exports.endTurn = endTurn;
 exports.beginActionTurn = beginActionTurn;
 exports.earnGold = earnGold;
+exports.buyCard = buyCard;

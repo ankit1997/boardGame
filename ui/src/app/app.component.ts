@@ -30,6 +30,7 @@ export class AppComponent implements OnInit {
   public currentBid: Bid = new Bid();
   public GODS = God;
   public doneCounter: number;
+  public buyCardCounter: number;
 
   public COLORS = ['red', 'yellow', 'green', 'blue', 'black'];
   public COLOR_DOTS = {
@@ -97,6 +98,7 @@ export class AppComponent implements OnInit {
     //
     this.backendService.socket.on('boardState', (board: any) => {
       this.doneCounter = 0;
+      this.buyCardCounter = 0;
       console.log(board);
       this.setProperties(board);
     });
@@ -586,6 +588,17 @@ export class AppComponent implements OnInit {
         endTurn: true,
       });
       this.doneCounter = 0;
+    }
+  }
+
+  buyCard(cardName: string) {
+    if (this.buyCardCounter < 3) {
+      this.buyCardCounter++;
+    } else {
+      this.backendService.action({
+        cardName: cardName,
+      });
+      this.buyCardCounter = 0;
     }
   }
 

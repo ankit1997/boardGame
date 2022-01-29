@@ -2,7 +2,7 @@ import { PlayerInfo, Stages } from './app.component';
 import { BoardState } from './BoardState';
 
 export class Properties {
-  gameId: string = '8e2fc12c-53c7-41cb-99d5-de304ab46281';
+  gameId: string = 'e54a2bcd-0a2b-46d1-a1aa-d8bf53e674b1';
   creator: number;
   numPlayers: number;
   playersInfo: PlayerInfo[];
