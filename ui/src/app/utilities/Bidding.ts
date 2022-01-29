@@ -61,5 +61,6 @@ export class Bidding {
       app.currentBid.god,
       app.currentBid.maxBidAmount
     );
+    app.currentBid = new Bid();
   }
 }

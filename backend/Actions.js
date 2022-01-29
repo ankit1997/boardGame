@@ -26,22 +26,34 @@ const endTurn = (game, playerId) => {
 
 const beginActionTurn = (game, playerId) => {
     if (game.boardState.stage != "ACTION") return;
+
     switch (game.players[playerId].prevBidGod) {
         case "ZEUS":
             if (game.priests > 0) {
                 game.priests--;
                 game.players[playerId].priests++;
+                game.logs.push(
+                    "[ZEUS] Priest card given to " + game.players[playerId].name
+                );
             }
             break;
         case "ATHENA":
             if (game.philosophers > 0) {
                 game.philosophers--;
                 game.players[playerId].philosophers++;
+                game.logs.push(
+                    "[ATHENA] Philosopher card given to " +
+                        game.players[playerId].name
+                );
             }
             break;
         case "APOLLO":
             game.gold--;
             game.players[playerId].gold++;
+            game.logs.push(
+                "[APOLLO] Free gold coin given to " +
+                    game.players[playerId].name
+            );
             break;
     }
 };

@@ -25,8 +25,8 @@ export class AppComponent implements OnInit {
   public graphics = new Graphics();
   public blockList: any[] = [];
   public playerState: PlayerState = new PlayerState();
-  public cardWidth: number = 70;
-  public cardHeight: number = 90;
+  public cardWidth: number = 80;
+  public cardHeight: number = 110;
   public currentBid: Bid = new Bid();
   public GODS = God;
   public doneCounter: number;
