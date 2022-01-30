@@ -2,7 +2,7 @@ import { PlayerInfo, Stages } from './app.component';
 import { BoardState } from './BoardState';
 
 export class Properties {
-  gameId: string = '8931af6a-fbe0-46ba-925f-d7c63daf5fc8';
+  gameId: string = 'e54a2bcd-0a2b-46d1-a1aa-d8bf53e674b1';
   creator: number;
   numPlayers: number;
   playersInfo: PlayerInfo[];
@@ -27,6 +27,8 @@ export class Properties {
   // state of the board
 
   boardState: BoardState;
+
+  logs: string[];
 
   constructor(numPlayers: number) {
     this.numPlayers = numPlayers;

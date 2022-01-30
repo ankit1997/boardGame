@@ -9,6 +9,7 @@ const getPlayerGameObj = (game, token) => {
         return undefined;
     }
     const obj = JSON.parse(JSON.stringify(game));
+    obj.logs = obj.logs.slice(-50);
     delete obj.playersAuth;
     for (let playerId in obj.players) {
         if (game.playersAuth[playerId].token != token) {

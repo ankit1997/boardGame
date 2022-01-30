@@ -2,7 +2,6 @@
 
 <div *ngIf="!gameInitialized" style="margin: 5px">
   <h2>Start a game</h2>
-  <span *ngIf="properties.gameId">Game ID: "{{ properties.gameId }}"</span>
   <p>Provide player details below:</p>
   <div
     class="p-inputgroup"
@@ -18,15 +17,24 @@
       [(ngModel)]="item.name"
     />
     <span class="p-inputgroup-addon">
-      <p-button
-        icon="pi pi-plus"
-        styleClass="p-button-sm p-button-secondary"
-        (click)="addPlayer()"
-      ></p-button>
+      <div style="padding: 5px">
+        <p-button
+          icon="pi pi-plus"
+          styleClass="p-button-sm p-button-secondary"
+          (click)="addPlayer()"
+        ></p-button>
+      </div>
+      <div style="padding: 5px">
+        <p-button
+          icon="pi pi-minus"
+          styleClass="p-button-sm p-button-secondary"
+          (click)="removePlayer(item.color)"
+        ></p-button>
+      </div>
     </span>
   </div>
   <div style="margin-top: 10px">
-    <p-button label="Initialize" (onClick)="initialize_game()"></p-button>
+    <p-button label="Initialize" (onClick)="initializeGame()"></p-button>
   </div>
   <hr />
   <h2>Join a game</h2>
@@ -78,7 +86,11 @@
 
 <div class="p-grid">
   <div class="p-col" id="board"></div>
-  <div class="p-col" style="margin-top: 15px" *ngIf="gameInitialized">
+  <div
+    class="p-col"
+    style="margin-top: 15px"
+    *ngIf="gameInitialized && properties && properties.boardState"
+  >
     <div class="p-grid" style="margin-top: 5px">
       <div
         class="p-d-flex p-ai-center"
@@ -269,7 +281,9 @@
         <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</p>
       </p-accordionTab>
       <p-accordionTab
-        header="Bidding"
+        header="Bidding {{
+          properties.boardState.turn == playerState.id ? '(Your turn)' : ''
+        }}"
         [selected]="properties.boardState.stage == 'BIDDING'"
       >
         <div
@@ -343,8 +357,12 @@
         </div>
       </p-accordionTab>
       <p-accordionTab
-        header="Action"
+        header="Action ({{ playerState.prevBidGod }})"
         *ngIf="
+          properties.boardState.stage == 'ACTION' &&
+          properties.boardState.turn == playerState.id
+        "
+        [selected]="
           properties.boardState.stage == 'ACTION' &&
           properties.boardState.turn == playerState.id
         "
@@ -380,38 +398,71 @@
               playerState.gold > playerState.templesAdded
             "
           ></p-button>
+       </div>
+        <div *ngIf="playerState.prevBidGod == 'ATHENA'">
+          <div style="margin: 5px; display: inline-block">
+            <p-button
+              styleClass="p-button-outlined p-button-success"
+              label="Buy Philosopher card (🪙x4) ({{ buyCardCounter }}/3)"
+              (onClick)="buyCard('philosopher')"
+              *ngIf="playerState.gold >= 4"
+            ></p-button>
+          </div>
+        </div>
+        <div *ngIf="playerState.prevBidGod == 'ZEUS'">
+          <div style="margin: 5px; display: inline-block">
+            <p-button
+              styleClass="p-button-outlined p-button-success"
+              label="Buy Priest card (🪙x4) ({{ buyCardCounter }}/3)"
+              (onClick)="buyCard('priest')"
+              *ngIf="playerState.gold >= 4"
+            ></p-button>
+          </div>
+        </div>
         <div *ngIf="playerState.prevBidGod == 'POSEIDON'">
-          <p-button
-            styleClass="p-button-outlined p-button-success"
-            label="Add ship"
-            (onClick)="placingShip = true"
-            *ngIf="
-              playerState.shipsAdded == 0 ||
-              playerState.gold > playerState.shipsAdded
-            "
-          ></p-button>
-          <p-button
+          <div style="margin: 5px">
+            <p-button
+              styleClass="p-button-outlined p-button-success"
+              label="Add soldier"
+              (onClick)="placingShip = true"
+              *ngIf="
+                playerState.shipsAdded == 0 ||
+                playerState.gold > playerState.shipsAdded
+              "
+            ></p-button>
+             <p-button
             styleClass="p-button-outlined p-button-success"
             label="Add Port"
             (onClick)="placingPort = true"
             *ngIf="
               playerState.portsAdded == 0 ||
               playerState.gold > playerState.portsAdded
-            "
-          ></p-button>
+            "></p-button>
+          </div>
         </div>
         <div *ngIf="playerState.prevBidGod == 'APOLLO'"></div>
-        <p-button
-          styleClass="p-button-outlined p-button-success"
-          label="Done"
-          (onClick)="completeAction()"
-        ></p-button>
+        <div style="margin: 5px; display: inline-block">
+          <p-button 
+            styleClass="p-button-primary"
+            label="Done ({{ doneCounter }}/3)"
+            (onClick)="completeAction()"
+          ></p-button>
+        </div>
       </p-accordionTab>
       <p-accordionTab header="Help" [selected]="false">
         <div class="p-grid" style="margin-top: 5px">
           <div class="p-col">
             <img src="assets/images/help/godActions.jpg" />
           </div>
+        </div>
+      </p-accordionTab>
+      <p-accordionTab header="Logs" [selected]="false">
+        <div style="margin-top: 5px">
+          <p-scrollPanel [style]="{ width: '100%', height: '250px' }">
+            <p *ngFor="let log of properties.logs; let idx = index">
+              <strong>{{ idx + 1 }})</strong> {{ log }}
+            </p>
+          </p-scrollPanel>
         </div>
       </p-accordionTab>
     </p-accordion>
