@@ -52,6 +52,7 @@ const updateOwner = (game, block, playerId) => {
 const addSoldier = (game, block, playerId) => {
     if (block == undefined) return;
     if (block.type != "land") return;
+    if (game.soldiers <= 0) return;
     block.numSoldiers += 1;
     game.players[playerId].soldiers += 1;
     updateOwner(game, block, playerId);
@@ -68,6 +69,7 @@ const removeSoldier = (game, block, playerId) => {
 const addShip = (game, block, playerId) => {
     if (block == undefined) return;
     if (block.type != "sea") return;
+    if (game.ships <= 0) return;
     block.numShips += 1;
     game.players[playerId].ships += 1;
     updateOwner(game, block, playerId);

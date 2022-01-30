@@ -180,7 +180,7 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             temples: 0,
             universities: 0,
             ports: 0,
-            fortress: 0,
+            forts: 0,
             metropolitan: 0,
             creatures: [],
             // below are stuff added in current user turn
@@ -252,7 +252,7 @@ const getNewGame = (gameId, width, height, playersInfo) => {
         territory_markers_loc: [],
         temple_building_loc: [],
         ports_building_loc: [],
-        fortress_building_loc: [],
+        fort_building_loc: [],
         universities_building_loc: [],
         board:
             board == undefined

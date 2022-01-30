@@ -1,6 +1,13 @@
 const fs = require("fs");
 const { v4: uuidv4, validate } = require("uuid");
-const { endTurn, earnGold, buyCard } = require("./Actions");
+const {
+    endTurn,
+    earnGold,
+    buyCard,
+    placePlayerSoldier,
+    placePlayerShip,
+    placePlayerFort,
+} = require("./Actions");
 const {
     getGame,
     getNewGame,
@@ -196,6 +203,27 @@ io.on("connection", (socket) => {
                 validAction = true;
             } else if (actionObj.cardName && actionObj.cardName.length > 0) {
                 buyCard(game, playerId, actionObj.cardName);
+                validAction = true;
+            } else if (actionObj.soldierBlockId >= 0) {
+                const block =
+                    game.boardState.board.blocks[actionObj.soldierBlockId];
+                placePlayerSoldier(game, playerId, block);
+                validAction = true;
+            } else if (actionObj.shipBlockId >= 0) {
+                const block =
+                    game.boardState.board.blocks[actionObj.shipBlockId];
+                placePlayerShip(game, playerId, block);
+                validAction = true;
+            } else if (actionObj.fortBlockId >= 0) {
+                const block =
+                    game.boardState.board.blocks[actionObj.fortBlockId];
+                placePlayerFort(game, playerId, block);
+                validAction = true;
+            } else if (actionObj.templeBlockId >= 0) {
+                placePlayerTemple(game, playerId, actionObj.templeBlockId);
+                validAction = true;
+            } else if (actionObj.portBlockId >= 0) {
+                placePlayerPort(game, playerId, actionObj.portBlockId);
                 validAction = true;
             }
 
