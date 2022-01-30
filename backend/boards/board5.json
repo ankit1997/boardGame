@@ -15,8 +15,9 @@
       "x": 500,
       "y": 48,
       "r": 48,
-      "numShips": 1,
-      "numProsperityMarkers": 1
+      "numShips": 2,
+      "numProsperityMarkers": 1,
+      "owner": 2
     },
     {
       "id": 1,
@@ -49,7 +50,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 0,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 2
     },
     {
       "id": 4,
@@ -88,9 +90,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 1,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 3
     },
     {
       "type": "land",
@@ -103,9 +106,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 0,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 2
     },
     {
       "id": 9,
@@ -129,7 +133,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 0,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 2
     },
     {
       "type": "land",
@@ -144,7 +149,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 1,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 3
     },
     {
       "type": "land",
@@ -159,7 +165,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 1,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 3
     },
     {
       "id": 13,
@@ -183,7 +190,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 2,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 4
     },
     {
       "id": 15,
@@ -209,8 +217,9 @@
       "x": 860,
       "y": 255.84609690826528,
       "r": 48,
-      "numShips": 1,
-      "numProsperityMarkers": 1
+      "numShips": 2,
+      "numProsperityMarkers": 1,
+      "owner": 3
     },
     {
       "id": 18,
@@ -232,9 +241,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 2,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 4
     },
     {
       "type": "sea",
@@ -242,8 +252,9 @@
       "x": 140,
       "y": 255.84609690826528,
       "r": 48,
-      "numShips": 1,
-      "numProsperityMarkers": 1
+      "numShips": 2,
+      "numProsperityMarkers": 1,
+      "owner": 4
     },
     {
       "id": 21,
@@ -285,7 +296,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 2,
-      "groupSize": 3
+      "groupSize": 3,
+      "owner": 4
     },
     {
       "id": 25,
@@ -316,9 +328,10 @@
       "x": 716,
       "y": 338.9845356715714,
       "r": 48,
-      "numShips": 1,
+      "numShips": 2,
       "numProsperityMarkers": 0,
-      "type": "sea"
+      "type": "sea",
+      "owner": 1
     },
     {
       "id": 28,
@@ -360,7 +373,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 4,
-      "groupSize": 4
+      "groupSize": 4,
+      "owner": 1
     },
     {
       "id": 32,
@@ -397,9 +411,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 5,
-      "groupSize": 1
+      "groupSize": 1,
+      "owner": 1
     },
     {
       "id": 35,
@@ -442,9 +457,10 @@
       "x": 572,
       "y": 422.1229744348775,
       "r": 48,
-      "numShips": 1,
+      "numShips": 2,
       "numProsperityMarkers": 0,
-      "type": "sea"
+      "type": "sea",
+      "owner": 4
     },
     {
       "id": 40,
@@ -499,9 +515,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 4,
-      "groupSize": 4
+      "groupSize": 4,
+      "owner": 1
     },
     {
       "id": 45,
@@ -579,7 +596,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 7,
-      "groupSize": 2
+      "groupSize": 2,
+      "owner": 4
     },
     {
       "id": 53,
@@ -603,7 +621,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 8,
-      "groupSize": 4
+      "groupSize": 4,
+      "owner": 0
     },
     {
       "type": "land",
@@ -616,9 +635,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 9,
-      "groupSize": 1
+      "groupSize": 1,
+      "owner": 0
     },
     {
       "id": 56,
@@ -642,7 +662,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 4,
-      "groupSize": 4
+      "groupSize": 4,
+      "owner": 1
     },
     {
       "id": 58,
@@ -664,9 +685,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 7,
-      "groupSize": 2
+      "groupSize": 2,
+      "owner": 4
     },
     {
       "type": "land",
@@ -679,9 +701,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 8,
-      "groupSize": 4
+      "groupSize": 4,
+      "owner": 0
     },
     {
       "id": 61,
@@ -706,9 +729,10 @@
       "x": 212,
       "y": 546.8306325798367,
       "r": 48,
-      "numShips": 1,
+      "numShips": 2,
       "numProsperityMarkers": 0,
-      "type": "sea"
+      "type": "sea",
+      "owner": 1
     },
     {
       "id": 64,
@@ -750,16 +774,18 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 8,
-      "groupSize": 4
+      "groupSize": 4,
+      "owner": 0
     },
     {
       "id": 68,
       "x": 428,
       "y": 588.3998519614897,
       "r": 48,
-      "numShips": 1,
+      "numShips": 2,
       "numProsperityMarkers": 0,
-      "type": "sea"
+      "type": "sea",
+      "owner": 0
     },
     {
       "id": 69,
@@ -783,7 +809,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 4,
-      "groupSize": 4
+      "groupSize": 4,
+      "owner": 1
     },
     {
       "type": "land",
@@ -822,7 +849,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 8,
-      "groupSize": 4
+      "groupSize": 4,
+      "owner": 0
     },
     {
       "id": 74,
@@ -856,9 +884,10 @@
       "x": 716,
       "y": 671.5382907247958,
       "r": 48,
-      "numShips": 1,
+      "numShips": 2,
       "numProsperityMarkers": 0,
-      "type": "sea"
+      "type": "sea",
+      "owner": 0
     },
     {
       "type": "sea",
@@ -897,7 +926,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 11,
-      "groupSize": 2
+      "groupSize": 2,
+      "owner": 3
     },
     {
       "type": "sea",
@@ -913,9 +943,10 @@
       "x": 500,
       "y": 713.1075101064489,
       "r": 48,
-      "numShips": 1,
+      "numShips": 2,
       "numProsperityMarkers": 0,
-      "type": "sea"
+      "type": "sea",
+      "owner": 2
     },
     {
       "id": 83,
@@ -941,7 +972,9 @@
       "x": 356,
       "y": 713.1075101064489,
       "r": 48,
-      "numProsperityMarkers": 0
+      "numProsperityMarkers": 0,
+      "numShips": 1,
+      "owner": 3
     },
     {
       "id": 86,
@@ -965,7 +998,8 @@
       "numTemples": 0,
       "numSoldiers": 0,
       "groupId": 12,
-      "groupSize": 2
+      "groupSize": 2,
+      "owner": 2
     },
     {
       "id": 88,
@@ -996,9 +1030,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 11,
-      "groupSize": 2
+      "groupSize": 2,
+      "owner": 3
     },
     {
       "id": 91,
@@ -1020,9 +1055,10 @@
       "numPorts": 0,
       "numUniversities": 0,
       "numTemples": 0,
-      "numSoldiers": 0,
+      "numSoldiers": 1,
       "groupId": 12,
-      "groupSize": 2
+      "groupSize": 2,
+      "owner": 2
     },
     {
       "id": 93,

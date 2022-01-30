@@ -286,14 +286,7 @@
         }}"
         [selected]="properties.boardState.stage == 'BIDDING'"
       >
-        <p
-          *ngIf="
-            playerState &&
-            playerState.priests > 0 &&
-            currentBid &&
-            currentBid.maxBidAmount > 0
-          "
-        >
+        <p>
           Each priest card will reduce payable by 🪙x1. You would still need to
           pay minimum 🪙x1.
         </p>
