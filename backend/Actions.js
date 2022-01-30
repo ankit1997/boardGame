@@ -1,4 +1,5 @@
-const { addSoldier, addShip } = require("./helper/block");
+const { findConnected } = require("./Game");
+const { addSoldier, addShip, getGroupIdbyBlockId } = require("./helper/block");
 
 const endTurn = (game, playerId) => {
     if (game.boardState.turn != playerId) {
@@ -108,51 +109,102 @@ const placePlayerSoldier = (game, playerId, block) => {
 const placePlayerShip = (game, playerId, block) => {
     addShip(game, block, playerId);
     game.players[playerId].shipsAdded++;
-    game.players[playerId].gold -= game.players[playerId].shipsAdded - 1;
-    game.gold += game.players[playerId].shipsAdded - 1;
+    if (game.players[playerId].shipsAdded > 1) {
+        game.players[playerId].gold -= game.players[playerId].shipsAdded - 1;
+        game.gold += game.players[playerId].shipsAdded - 1;
+    } 
 };
 
 const placePlayerFort = (game, playerId, block) => {
-    addFort(game, block[fortBlockId], playerId);
+    addFort(game, block, playerId);
     const player = game.players[playerId];
-    player.gold -= player.fortAdded;
-    player.fortAdded++;
+    player.gold -= 2;
+    game.gold +=2;
+    game.ports--;
     sendGameObjToPlayers(game);
 };
 
-const placePlayerTemple = (game, playerId, templeBlockId) => {
-    addTemple(game, block[templeBlockId], playerId);
+const placePlayerTemple = (game, playerId, block) => {
+    addTemple(game, block, playerId);
     const player = game.players[playerId];
-    player.gold -= player.templesAdded;
-    player.templesAdded++;
+    player.gold -= 2;
+    game.gold += 2;
+    game.temples--;
     sendGameObjToPlayers(game);
 };
 
-const placePlayerPort = (game, playerId, portBlockId) => {
-    addPort(game, block[portBlockId], playerId);
+const placePlayerPort = (game, playerId, block) => {
+    addPort(game, block, playerId);
     const player = game.players[playerId];
-    player.gold -= player.portsAdded;
-    player.portsAdded++;
+    player.gold -= 2;
+    game.gold += 2;
+    game.ports--;
     sendGameObjToPlayers(game);
 };
 
-const moveSoldier = (game, playerId, sourceBlock, targetBlock, numSoldiers) => {
-    // graph - neighbours
-    if (!pathExistsBetweenIslands(game, sourceBlock, targetBlock)) return;
-    // fight possible?
-    // if no fight, then move soldiers
+const placePlayerUniversity = (game, playerId, block) => {
+    addUniversity(game, block, playerId);
+    const player = game.players[playerId];
+    player.gold -= 2;
+    game.gold += 2;
+    game.universities--;
+    sendGameObjToPlayers(game);
+}
+
+
+const moveSoldier = (game, playerId, sourceBlockId, targetBlockId, numSoldiers) => {
+    
+    if(pathExistsBetweenIslands(game, playerId, sourceBlockId, targetBlockId))
+        return true;
+    else    
+        return false;
 };
 
-const pathExistsBetweenIslands = (game, sourceGroupId, targetGroupId) => {
-    // TODO: Moga
-    // check if path exists between sourceBlock and targetBlock
-    // do consider that path can exist between the whole island (group) of sourceBlock to targetBlock via ship(s)
+const pathExistBetweenBlocks = (game, playerId, sourceBlockId, targetBlockId) => {
+
+    const dMat = game.distanceMatrix;
+    const connectedBlocks = new Set();
+
+    if(sourceBlockId == targetBlockId)
+        return true;
+    
+    findConnected(sourceBlockId, dMat, connectedBlocks);
+    
+    for(let j=0; j < connectedBlocks.length; j++){
+        if(connectedBlocks[j].type == sea && connectedBlocks[j].owner == playerId && connectedBlocks[j].numShips >= 1){
+            pathExistBetweenBlocks(game, playerId, connectedBlocks[j], targetBlockId);
+        }
+        else if (connectedBlocks[j].id == targetBlockId)
+            return true;
+    }
     return false;
+}
+
+const pathExistsBetweenIslands = (game, playerId, sourceBlockId, targetBlockId) => {
+    
+    const sourceGroupId = game.boardState.board.blocks[sourceBlockId].groupId;
+    const targetGroupId = game.boardState.board.blocks[targetBlockId].groupId;
+    
+    const sourceGroupBlocks = game.boardState.board.blocks.filter(
+        (block) => block.groupId == sourceGroupId
+    );
+    const targetGroupBlocks = game.boardState.board.blocks.filter(
+        (block) => block.groupId == targetGroupId
+    );
+
+    for (let i = 0; i < sourceGroupBlocks.length; i++) {
+        for (let j = 0; j < targetGroupBlocks.length; j++) {
+            if(pathexistBetweenBlocks(game, playerId, sourceBlockId, targetBlockId))
+                return true;
+            else
+                return false;
+        }
+    } 
 };
 
 const moveShip = (game, playerId, sourceBlock, targetBlock, numShips) => {
     // graph - neighbours
-    if (!pathExistsInWater(game, sourceBlock, targetBlock)) return;
+    // if (!pathExistsInWater(game, sourceBlock, targetBlock)) return;
     // fight possible?
     // if no fight, then move ships
 };

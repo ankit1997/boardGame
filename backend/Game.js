@@ -77,6 +77,27 @@ const setupBoard = (width, height, r) => {
 
     return board;
 };
+const Blocks = new Set();
+const distanceMatrix = [];
+for (let i = 0; i < n; i++) {
+    distanceMatrix[i] = [];
+    for (let j = 0; j < n; j++) {
+        const d =
+            Math.pow(Blocks[i].x - Blocks[j].x, 2) +
+            Math.pow(Blocks[i].y - Blocks[j].y, 2);
+        distanceMatrix[i].push(d);
+    }
+}
+const findConnected = (i, dmat, connectedBlocks) => {
+        const unitDistance = 3 * 48 * 48;
+        if (connectedBlocks.has(i)) return;
+        connectedBlocks.add(i);
+        for (let j = 0; j < dmat.length; j++) {
+            if (dmat[i][j] < 1.5 * unitDistance) {
+                findConnected(j, dmat, connectedBlocks);
+            }
+        }
+};  
 
 const groupLand = (game) => {
     const landBlocks = game.boardState.board.blocks.filter(
@@ -86,16 +107,7 @@ const groupLand = (game) => {
     if (n == 0) return;
 
     const unitDistance = 3 * landBlocks[0].r * landBlocks[0].r;
-    const findConnected = (i, dmat, connectedBlocks) => {
-        if (connectedBlocks.has(i)) return;
-        connectedBlocks.add(i);
-        for (let j = 0; j < dmat.length; j++) {
-            if (dmat[i][j] < 1.5 * unitDistance) {
-                findConnected(j, dmat, connectedBlocks);
-            }
-        }
-    };
-
+    
     const distanceMatrix = [];
     for (let i = 0; i < n; i++) {
         distanceMatrix[i] = [];
@@ -137,6 +149,7 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     game.width = width;
     game.height = height;
     game.block_r = 48;
+    game.unitDistance = 3 * 48 * 48;
 
     const fpath = "boards/board" + playersInfo.length + ".json";
     let board = undefined;
@@ -187,13 +200,12 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             prevBidGod: undefined,
             soldiersAdded: 0,
             shipsAdded: 0,
-            portsAdded: 0,
-            fortsAdded: 0,
             universitiesAdded: 0,
             templesAdded: 0,
             metropolitansAdded: 0,
         };
     }
+    game.distanceMatrix = distanceMatrix;
     game.numPlayers = game.playersInfo.length;
     game.gold = 100 - startGold * playersInfo.length;
     game.prosperity_markers = 16;
@@ -202,6 +214,11 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     game.philosophers = 17;
     game.soldiers = 40;
     game.ships = 40;
+    game.ports = 10;
+    game.forts = 10;
+    game.temples = 10;
+    game.universities = 10;
+    game.metropolitan = 10;
     game.creatures_pile = [
         "CHIMERA",
         "CYCLOPS",
@@ -300,3 +317,4 @@ exports.saveBoard = saveBoard;
 exports.saveGame = saveGame;
 exports.getGame = getGame;
 exports.getGamePath = getGamePath;
+exports.findConnected = findConnected;

@@ -36,6 +36,7 @@ const getBlocksByGroupId = (game, groupId) => {
     );
 };
 
+
 const updateOwner = (game, block, playerId) => {
     // update the owner of a block. if the block is part of a group, change owners of all group blocks
     if (block == undefined) return;
@@ -82,6 +83,44 @@ const removeShip = (game, block, playerId) => {
     block.numShips -= 1;
     game.players[playerId].ships -= 1;
 };
+
+const addFort = (game, block, playerId) => {
+    if (block == undefined) return;
+    if (block.type != "land") return;
+    if (game.forts <= 0) return;
+    block.numForts += 1;
+    game.players[playerId].forts += 1;
+    updateOwner(game, block, playerId);
+};
+
+const addTemple = (game, block, playerId) => {
+    if (block == undefined) return;
+    if (block.type != "land") return;
+    if (game.temples <= 0) return;
+    block.numTemples += 1;
+    game.players[playerId].temples += 1;
+    updateOwner(game, block, playerId);
+};
+
+const addPort = (game, block, playerId) => {
+    if (block == undefined) return;
+    if (block.type != "land") return;
+    if (game.ports <= 0) return;
+    block.numPorts += 1;
+    game.players[playerId].ports += 1;
+    updateOwner(game, block, playerId);
+};
+
+const addUniversity = (game, block, playerId) => {
+    if (block == undefined) return;
+    if (block.type != "land") return;
+    if (game.universities <= 0) return;
+    block.numUniversities += 1;
+    game.players[playerId].universities += 1;
+    updateOwner(game, block, playerId);
+}
+
+
 
 exports.newLandBlock = newLandBlock;
 exports.newSeaBlock = newSeaBlock;
