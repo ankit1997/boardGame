@@ -97,7 +97,7 @@ const findConnected = (i, dmat, connectedBlocks) => {
                 findConnected(j, dmat, connectedBlocks);
             }
         }
-};  
+};
 
 const groupLand = (game) => {
     const landBlocks = game.boardState.board.blocks.filter(
@@ -107,7 +107,7 @@ const groupLand = (game) => {
     if (n == 0) return;
 
     const unitDistance = 3 * landBlocks[0].r * landBlocks[0].r;
-    
+
     const distanceMatrix = [];
     for (let i = 0; i < n; i++) {
         distanceMatrix[i] = [];

@@ -156,7 +156,7 @@ const moveSoldier = (game, playerId, sourceBlockId, targetBlockId, numSoldiers) 
     
     if(pathExistsBetweenIslands(game, playerId, sourceBlockId, targetBlockId))
         return true;
-    else    
+    else
         return false;
 };
 
@@ -167,9 +167,9 @@ const pathExistBetweenBlocks = (game, playerId, sourceBlockId, targetBlockId) =>
 
     if(sourceBlockId == targetBlockId)
         return true;
-    
+
     findConnected(sourceBlockId, dMat, connectedBlocks);
-    
+
     for(let j=0; j < connectedBlocks.length; j++){
         if(connectedBlocks[j].type == sea && connectedBlocks[j].owner == playerId && connectedBlocks[j].numShips >= 1){
             pathExistBetweenBlocks(game, playerId, connectedBlocks[j], targetBlockId);
@@ -181,10 +181,10 @@ const pathExistBetweenBlocks = (game, playerId, sourceBlockId, targetBlockId) =>
 }
 
 const pathExistsBetweenIslands = (game, playerId, sourceBlockId, targetBlockId) => {
-    
+
     const sourceGroupId = game.boardState.board.blocks[sourceBlockId].groupId;
     const targetGroupId = game.boardState.board.blocks[targetBlockId].groupId;
-    
+
     const sourceGroupBlocks = game.boardState.board.blocks.filter(
         (block) => block.groupId == sourceGroupId
     );
@@ -194,12 +194,12 @@ const pathExistsBetweenIslands = (game, playerId, sourceBlockId, targetBlockId) 
 
     for (let i = 0; i < sourceGroupBlocks.length; i++) {
         for (let j = 0; j < targetGroupBlocks.length; j++) {
-            if(pathexistBetweenBlocks(game, playerId, sourceBlockId, targetBlockId))
+            if(pathExistBetweenBlocks(game, playerId, sourceGroupBlocks[i], targetGroupBlocks[j]))
                 return true;
             else
                 return false;
         }
-    } 
+    }
 };
 
 const moveShip = (game, playerId, sourceBlock, targetBlock, numShips) => {
