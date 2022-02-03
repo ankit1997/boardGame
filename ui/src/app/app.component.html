@@ -1,4 +1,5 @@
 <p-toast></p-toast>
+<p-blockUI [blocked]="blockUI"></p-blockUI>
 
 <div *ngIf="!gameInitialized" style="margin: 5px">
   <h2>Start a game</h2>
@@ -249,6 +250,12 @@
             pTooltip="Soldiers"
             tooltipPosition="bottom"
           ></p-chip>
+          <p-chip
+            label="🚢 x {{ playerState.ships }}"
+            styleClass="p-mr-3"
+            pTooltip="Ships"
+            tooltipPosition="bottom"
+          ></p-chip>
         </div>
         <div class="p-grid" style="margin-top: 5px">
           <img
@@ -277,7 +284,7 @@
           />
         </div>
       </p-accordionTab>
-      <p-accordionTab header="Creatures" [selected]="true">
+      <p-accordionTab header="Creatures" [selected]="false">
         <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</p>
       </p-accordionTab>
       <p-accordionTab
@@ -374,12 +381,15 @@
         <div *ngIf="playerState.prevBidGod == 'ARES'">
           <div style="margin: 5px; display: inline-block">
             <p-button
-              styleClass="p-button-outlined p-button-success"
+              styleClass="{{
+                placingSoldier ? '' : 'p-button-outlined'
+              }} p-button-success"
               label="Add soldier"
               (onClick)="placingSoldier = true"
               *ngIf="
-                playerState.soldiersAdded == 0 ||
-                playerState.gold > playerState.soldiersAdded
+                (playerState.soldiersAdded == 0 ||
+                  playerState.gold > playerState.soldiersAdded) &&
+                playerState.soldiersAdded <= 4
               "
             ></p-button>
           </div>
@@ -418,12 +428,15 @@
         <div *ngIf="playerState.prevBidGod == 'POSEIDON'">
           <div style="margin: 5px">
             <p-button
-              styleClass="p-button-outlined p-button-success"
-              label="Add soldier"
+              styleClass="{{
+                placingShip ? '' : 'p-button-outlined'
+              }} p-button-success"
+              label="Add ship"
               (onClick)="placingShip = true"
               *ngIf="
-                playerState.soldiersAdded == 0 ||
-                playerState.gold > playerState.soldiersAdded
+                (playerState.shipsAdded == 0 ||
+                  playerState.gold > playerState.shipsAdded - 1) &&
+                playerState.shipsAdded <= 4
               "
             ></p-button>
           </div>

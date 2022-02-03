@@ -27,6 +27,7 @@ export class Block {
   public polygon: Polygon;
   public numProsperityMarkers: number;
   public pieces: Piece[] = [];
+  public neighbours: number[];
 
   constructor(public type: string) {}
 

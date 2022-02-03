@@ -14,6 +14,7 @@ const newLandBlock = (block, obj) => {
     landBlock.numSoldiers = 0;
     landBlock.groupId = undefined;
     landBlock.groupSize = undefined;
+    landBlock.neighbours = [];
     return landBlock;
 };
 
@@ -27,6 +28,7 @@ const newSeaBlock = (block, obj) => {
     seaBlock.r = block.r;
     seaBlock.numShips = block.numShips;
     seaBlock.numProsperityMarkers = obj.numProsperityMarkers;
+    seaBlock.neighbours = [];
     return seaBlock;
 };
 
@@ -36,6 +38,11 @@ const getBlocksByGroupId = (game, groupId) => {
     );
 };
 
+const getGroupBlocksByBlockId = (game, blockId) => {
+    const groupId = game.boardState.board.blocks[blockId].groupId;
+    if (groupId == undefined) return;
+    return getBlocksByGroupId(game, groupId);
+};
 
 const updateOwner = (game, block, playerId) => {
     // update the owner of a block. if the block is part of a group, change owners of all group blocks
@@ -54,8 +61,10 @@ const addSoldier = (game, block, playerId) => {
     if (block == undefined) return;
     if (block.type != "land") return;
     if (game.soldiers <= 0) return;
+    console.log("Adding soldier at " + block.id);
     block.numSoldiers += 1;
     game.players[playerId].soldiers += 1;
+    game.players[playerId].soldiersAdded += 1;
     updateOwner(game, block, playerId);
 };
 
@@ -63,6 +72,7 @@ const removeSoldier = (game, block, playerId) => {
     if (block == undefined) return;
     if (block.type != "land") return;
     if (block.numSoldiers == 0) return;
+    console.log("Removing soldier from " + block.id);
     block.numSoldiers -= 1;
     game.players[playerId].soldiers -= 1;
 };
@@ -71,8 +81,10 @@ const addShip = (game, block, playerId) => {
     if (block == undefined) return;
     if (block.type != "sea") return;
     if (game.ships <= 0) return;
+    console.log("Adding ship at " + block.id);
     block.numShips += 1;
     game.players[playerId].ships += 1;
+    game.players[playerId].shipsAdded += 1;
     updateOwner(game, block, playerId);
 };
 
@@ -80,6 +92,7 @@ const removeShip = (game, block, playerId) => {
     if (block == undefined) return;
     if (block.type != "land") return;
     if (block.numShips == 0) return;
+    console.log("Removing ship from " + block.id);
     block.numShips -= 1;
     game.players[playerId].ships -= 1;
 };
@@ -118,9 +131,7 @@ const addUniversity = (game, block, playerId) => {
     block.numUniversities += 1;
     game.players[playerId].universities += 1;
     updateOwner(game, block, playerId);
-}
-
-
+};
 
 exports.newLandBlock = newLandBlock;
 exports.newSeaBlock = newSeaBlock;
@@ -129,3 +140,5 @@ exports.addSoldier = addSoldier;
 exports.addShip = addShip;
 exports.removeSoldier = removeSoldier;
 exports.removeShip = removeShip;
+exports.getBlocksByGroupId = getBlocksByGroupId;
+exports.getGroupBlocksByBlockId = getGroupBlocksByBlockId;

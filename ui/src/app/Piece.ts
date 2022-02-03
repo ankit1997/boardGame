@@ -1,4 +1,4 @@
-import { Container, Loader, Sprite } from 'pixi.js';
+import { Container, Loader, SCALE_MODES, Sprite, Texture } from 'pixi.js';
 
 const resources = Loader.shared.resources;
 
@@ -14,7 +14,12 @@ export class Piece {
 
   draw(container: Container) {
     if (this.x == undefined || this.y == undefined) return;
-    this.sprite = new Sprite(resources[this.path].texture);
+
+    const texture: Texture = resources[this.path].texture;
+    texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+
+    this.sprite = new Sprite(texture);
+
     if (this.type == 'ship') {
       this.sprite.width = 120;
       this.sprite.height = 100;
@@ -22,9 +27,44 @@ export class Piece {
       this.sprite.width = 170;
       this.sprite.height = 160;
     }
-    this.sprite.x = this.x - this.sprite.width/2;
-    this.sprite.y = this.y - this.sprite.height/2;
+
+    if (this.type == 'ship' || this.type == 'soldier') {
+      this.sprite.interactive = false;
+      this.sprite
+        .on('pointerdown', onDragStart)
+        .on('pointerup', onDragEnd)
+        //.on('pointerupoutside', onDragEnd)
+        .on('pointermove', onDragMove);
+    }
+
+    this.sprite.anchor.set(0.5);
+    this.sprite.x = this.x;
+    this.sprite.y = this.y;
     container.addChild(this.sprite);
+  }
+}
+
+function onDragStart(event) {
+  // store a reference to the data
+  // the reason for this is because of multitouch
+  // we want to track the movement of this particular touch
+  this.data = event.data;
+  // this.alpha = 0.5;
+  this.dragging = true;
+}
+
+function onDragEnd() {
+  // this.alpha = 1;
+  this.dragging = false;
+  // set the interaction data to null
+  this.data = null;
+}
+
+function onDragMove() {
+  if (this.dragging) {
+    const newPosition = this.data.getLocalPosition(this.parent);
+    this.x = newPosition.x;
+    this.y = newPosition.y;
   }
 }
 

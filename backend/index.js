@@ -7,6 +7,7 @@ const {
     placePlayerSoldier,
     placePlayerShip,
     placePlayerFort,
+    moveSoldier,
 } = require("./Actions");
 const {
     getGame,
@@ -52,6 +53,7 @@ io.on("connection", (socket) => {
 
     socket.on("initialize", (width, height, playersInfo) => {
         try {
+            console.log("initialize");
             const gameId = uuidv4();
             const game = getNewGame(gameId, width, height, playersInfo);
             console.log("Game created with ID = " + gameId);
@@ -74,6 +76,7 @@ io.on("connection", (socket) => {
 
     socket.on("authenticate", (gameId, name, token) => {
         try {
+            console.log("authenticate");
             if (!fs.existsSync(getGamePath(gameId))) {
                 return;
             }
@@ -92,6 +95,7 @@ io.on("connection", (socket) => {
 
     socket.on("setup", (blockId, marker, obj, completeFlag) => {
         try {
+            console.log("setup");
             if (!verify(socket)) return;
 
             const gameId = socket["userData"]["gameId"];
@@ -169,6 +173,7 @@ io.on("connection", (socket) => {
 
     socket.on("placeBid", (god, amount) => {
         try {
+            console.log("placeBid");
             if (!verify(socket)) return;
             const gameId = socket["userData"]["gameId"];
             const game = getGame(gameId);
@@ -181,6 +186,7 @@ io.on("connection", (socket) => {
 
     socket.on("action", (actionObj) => {
         try {
+            console.log("action");
             if (!verify(socket)) return;
             const gameId = socket["userData"]["gameId"];
             const game = getGame(gameId);
@@ -191,13 +197,16 @@ io.on("connection", (socket) => {
 
             let validAction = false;
             if (actionObj.endTurn == true) {
+                const turnEnded = endTurn(game, playerId);
+                if (turnEnded) {
+                    earnGold(game, playerId);
+                }
                 if (
-                    endTurn(game, playerId) &&
+                    turnEnded &&
                     game.boardState.nextTurnOrder.length ==
                         game.boardState.turnOrder.length &&
                     game.boardState.turnOrder.length != 0
                 ) {
-                    earnGold(game, playerId);
                     initializeBidding(game);
                 }
                 validAction = true;
@@ -224,6 +233,20 @@ io.on("connection", (socket) => {
                 validAction = true;
             } else if (actionObj.portBlockId >= 0) {
                 placePlayerPort(game, playerId, actionObj.portBlockId);
+                validAction = true;
+            } else if (
+                actionObj.move &&
+                actionObj.move.sourceBlockId >= 0 &&
+                actionObj.move.targetBlockId >= 0 &&
+                actionObj.move.numSoldiers > 0
+            ) {
+                moveSoldier(
+                    game,
+                    playerId,
+                    actionObj.move.sourceBlockId,
+                    actionObj.move.targetBlockId,
+                    actionObj.move.numSoldiers
+                );
                 validAction = true;
             }
 

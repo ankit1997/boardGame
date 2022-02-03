@@ -47,9 +47,10 @@ const setupBoard = (width, height, r) => {
                 x: x,
                 y: y,
                 r: r,
-                numShips: 1,
+                numShips: 0,
                 numProsperityMarkers: 0,
                 type: "sea",
+                neighbours: [],
             };
             board.blocks.push(seaBlock);
         }
@@ -67,9 +68,10 @@ const setupBoard = (width, height, r) => {
                 x: x,
                 y: y,
                 r: r,
-                numShips: 1,
+                numShips: 0,
                 numProsperityMarkers: 0,
                 type: "sea",
+                neighbours: [],
             };
             board.blocks.push(seaBlock);
         }
@@ -77,26 +79,22 @@ const setupBoard = (width, height, r) => {
 
     return board;
 };
-const Blocks = new Set();
-const distanceMatrix = [];
-for (let i = 0; i < n; i++) {
-    distanceMatrix[i] = [];
-    for (let j = 0; j < n; j++) {
-        const d =
-            Math.pow(Blocks[i].x - Blocks[j].x, 2) +
-            Math.pow(Blocks[i].y - Blocks[j].y, 2);
-        distanceMatrix[i].push(d);
-    }
-}
-const findConnected = (i, dmat, connectedBlocks) => {
-        const unitDistance = 3 * 48 * 48;
-        if (connectedBlocks.has(i)) return;
-        connectedBlocks.add(i);
-        for (let j = 0; j < dmat.length; j++) {
-            if (dmat[i][j] < 1.5 * unitDistance) {
-                findConnected(j, dmat, connectedBlocks);
+
+const updateNeighbours = (game) => {
+    const unitDistance = 3 * game.block_r * game.block_r;
+    for (let blocki of game.boardState.board.blocks) {
+        let neighbours = [];
+        for (let blockj of game.boardState.board.blocks) {
+            if (blocki.id === blockj.id) continue;
+            let dist =
+                Math.pow(blocki.x - blockj.x, 2) +
+                Math.pow(blocki.y - blockj.y, 2);
+            if (dist < 1.5 * unitDistance) {
+                neighbours.push(blockj.id);
             }
         }
+        blocki.neighbours = neighbours;
+    }
 };
 
 const groupLand = (game) => {
@@ -106,38 +104,38 @@ const groupLand = (game) => {
     const n = landBlocks.length;
     if (n == 0) return;
 
-    const unitDistance = 3 * landBlocks[0].r * landBlocks[0].r;
-
-    const distanceMatrix = [];
-    for (let i = 0; i < n; i++) {
-        distanceMatrix[i] = [];
-        for (let j = 0; j < n; j++) {
-            const d =
-                Math.pow(landBlocks[i].x - landBlocks[j].x, 2) +
-                Math.pow(landBlocks[i].y - landBlocks[j].y, 2);
-            distanceMatrix[i].push(d);
-        }
-    }
-
-    const visited = new Set();
     let groupId = 0;
-    for (let i = 0; i < n && visited.size < n; i++) {
-        if (visited.has(i)) continue;
-        const connectedBlocks = new Set();
-        findConnected(i, distanceMatrix, connectedBlocks);
-        const connectedBlocksArray = Array.from(connectedBlocks);
-        connectedBlocksArray.forEach((item) => visited.add(item));
-        connectedBlocksArray.forEach((idx, j) => {
-            landBlocks[idx].groupId = groupId;
-            landBlocks[idx].groupSize = connectedBlocksArray.length;
-            if (landBlocks[idx].groupSize == 1) {
-                landBlocks[idx].numProsperityMarkers = 2;
-            } else if (landBlocks[idx].groupSize == 2 && j == 0) {
-                landBlocks[idx].numProsperityMarkers = 1;
+    const visited = new Set();
+    for (let landBlock of landBlocks) {
+        if (visited.has(landBlock.id)) continue;
+        const groupBlocks = [];
+        const queue = [landBlock];
+        while (queue.length > 0) {
+            let size = queue.length;
+            while (size-- > 0) {
+                const block = queue.shift();
+                visited.add(block.id);
+                groupBlocks.push(block);
+                for (let neighId of block.neighbours) {
+                    const neigh = game.boardState.board.blocks[neighId];
+                    if (visited.has(neighId) || neigh.type != "land") continue;
+                    queue.push(neigh);
+                }
+            }
+        }
+
+        groupBlocks.forEach((block, i) => {
+            block.groupId = groupId;
+            block.groupSize = groupBlocks.length;
+            if (block.groupSize == 1) {
+                block.numProsperityMarkers = 2;
+            } else if (block.groupSize == 2 && i == 0) {
+                block.numProsperityMarkers = 1;
             } else {
-                landBlocks[idx].numProsperityMarkers = 0;
+                block.numProsperityMarkers = 0;
             }
         });
+
         groupId++;
     }
 };
@@ -149,7 +147,6 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     game.width = width;
     game.height = height;
     game.block_r = 48;
-    game.unitDistance = 3 * 48 * 48;
 
     const fpath = "boards/board" + playersInfo.length + ".json";
     let board = undefined;
@@ -178,18 +175,31 @@ const getNewGame = (gameId, width, height, playersInfo) => {
     }
     game.players = {};
     for (let player of playersInfo) {
+        let soldiers = 0;
+        let ships = 0;
+        let pmarkers = 0;
+        if (board !== undefined) {
+            board.blocks.forEach((block) => {
+                if (block.type == "sea" && block.owner == player.id)
+                    ships += block.numShips;
+                if (block.type == "land" && block.owner == player.id)
+                    soldiers += block.numSoldiers;
+                if (block.owner == player.id)
+                    pmarkers += block.numProsperityMarkers;
+            });
+        }
         game.players[player.id] = {
             token: game.playersAuth[player.id].token,
             id: player.id,
             name: player.name,
             color: player.color,
             gold: startGold,
-            prosperity_markers: 0,
+            prosperity_markers: pmarkers,
             priests: 0,
             philosophers: 0,
             dice: 0,
-            soldiers: 0,
-            ships: 0,
+            soldiers: soldiers,
+            ships: ships,
             temples: 0,
             universities: 0,
             ports: 0,
@@ -205,7 +215,6 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             metropolitansAdded: 0,
         };
     }
-    game.distanceMatrix = distanceMatrix;
     game.numPlayers = game.playersInfo.length;
     game.gold = 100 - startGold * playersInfo.length;
     game.prosperity_markers = 16;
@@ -275,11 +284,13 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             board == undefined
                 ? setupBoard(game.width, game.height, game.block_r)
                 : board,
+        fight: { blockId: undefined, players: [] },
     };
     game.boardState.turn = game.boardState.turnOrder[0];
     game.logs = [];
 
     shuffle(game.boardState.bids);
+    updateNeighbours(game);
     groupLand(game);
 
     return game;
@@ -317,4 +328,3 @@ exports.saveBoard = saveBoard;
 exports.saveGame = saveGame;
 exports.getGame = getGame;
 exports.getGamePath = getGamePath;
-exports.findConnected = findConnected;

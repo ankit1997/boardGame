@@ -10,7 +10,7 @@ import { Bidding } from './utilities/Bidding';
 
 // Aliases
 const loader = Loader;
-const resources = Loader.shared.resources;
+// const resources = Loader.shared.resources;
 
 @Component({
   selector: 'app-root',
@@ -31,6 +31,7 @@ export class AppComponent implements OnInit {
   public GODS = God;
   public doneCounter: number;
   public buyCardCounter: number;
+  public blockUI: boolean = false;
 
   public COLORS = ['red', 'yellow', 'green', 'blue', 'black'];
   public COLOR_DOTS = {
@@ -97,10 +98,12 @@ export class AppComponent implements OnInit {
     });
     //
     this.backendService.socket.on('boardState', (board: any) => {
+      this.blockUI = true;
       this.doneCounter = 0;
       this.buyCardCounter = 0;
-      console.log(board);
+      // console.log(board);
       this.setProperties(board);
+      this.blockUI = false;
     });
   }
 
@@ -260,14 +263,69 @@ export class AppComponent implements OnInit {
       this.onInitialization();
       this.setup_board();
     } else {
-      this.updateBoard();
+      this.setup_board();
+      this.handleInteractions(boardState);
+    }
+  }
+
+  handleInteractions(boardState) {
+    if (!this.gameInitialized) {
+      console.log('game not initialized');
+      return;
+    }
+    for (let block of this.blockList) {
+      for (let piece of block.pieces) {
+        if (piece && piece.sprite) {
+          piece.sprite.interactive = false;
+        }
+      }
+    }
+    if (
+      boardState.stage == 'ACTION' &&
+      boardState.turn == this.playerState.id
+    ) {
+      if (this.playerState.prevBidGod == 'ARES') {
+        let piecesArray = this.blockList
+          .filter(
+            (block) =>
+              block &&
+              block.type == 'land' &&
+              block.owner == this.playerState.id &&
+              block.pieces &&
+              block.pieces.length > 0
+          )
+          .map((block) => block.pieces);
+        for (let pieces of piecesArray) {
+          pieces.forEach((piece) => {
+            if (piece.type == 'soldier') {
+              piece.sprite.interactive = true;
+            }
+          });
+        }
+      } else if (this.playerState.prevBidGod == 'POSEIDON') {
+        let piecesArray = this.blockList
+          .filter(
+            (block) =>
+              block &&
+              block.type == 'sea' &&
+              block.owner == this.playerState.id &&
+              block.pieces &&
+              block.pieces.length > 0
+          )
+          .map((block) => block.pieces);
+        for (let pieces of piecesArray) {
+          pieces.forEach((piece: Piece) => {
+            if (piece.type == 'ship') {
+              piece.sprite.interactive = true;
+            }
+          });
+        }
+      }
     }
   }
 
   start() {
     this.validateGame();
-
-    this.gameInitialized = true;
 
     this.app = new Application({
       width: this.properties.width,
@@ -300,6 +358,7 @@ export class AppComponent implements OnInit {
 
     this.app.renderer.view.addEventListener('click', (e) => {
       //
+      console.log('clicked');
       if (window.scrollY !== 0) {
         this.messageService.add({
           severity: 'error',
@@ -336,8 +395,10 @@ export class AppComponent implements OnInit {
         const block: Block = this.getBlockAtXY(e.x, e.y);
         if (this.placingSoldier) {
           this.placeSoldier(block);
+          this.placingSoldier = false;
         } else if (this.placingShip) {
           this.placeShip(block);
+          this.placingShip = false;
         } else if (this.placingBuilding != '') {
           let obj = {};
           switch (this.placingBuilding) {
@@ -361,7 +422,6 @@ export class AppComponent implements OnInit {
           if (Object.keys(obj).length != 0) {
             this.backendService.action(obj);
           }
-
           this.placingBuilding = '';
         }
       }
@@ -483,58 +543,65 @@ export class AppComponent implements OnInit {
         piece.draw(this.app.stage);
       }
     }
+
+    this.gameInitialized = true;
+    this.handleInteractions(this.properties.boardState);
   }
 
-  updateBoard() {
-    for (let block of this.properties.boardState.board.blocks) {
-      const blockObj = this.blockList[block.id];
+  /*updateBoard() {
+    for (let incomingBlock of this.properties.boardState.board.blocks) {
+      const existingBlock: any = this.blockList[incomingBlock.id];
 
-      if (blockObj == undefined) continue;
+      if (existingBlock == undefined) continue;
 
       // 1> update prosperity markers
       if (
-        blockObj.numProsperityMarkers != block.numProsperityMarkers &&
-        block.numProsperityMarkers > blockObj.numProsperityMarkers
+        existingBlock.numProsperityMarkers !=
+          incomingBlock.numProsperityMarkers &&
+        incomingBlock.numProsperityMarkers > existingBlock.numProsperityMarkers
       ) {
-        const diff = block.numProsperityMarkers - blockObj.numProsperityMarkers;
+        const diff =
+          incomingBlock.numProsperityMarkers -
+          existingBlock.numProsperityMarkers;
         for (
-          let i = blockObj.numProsperityMarkers;
-          i < blockObj.numProsperityMarkers + diff;
+          let i = existingBlock.numProsperityMarkers;
+          i < existingBlock.numProsperityMarkers + diff;
           i++
         ) {
-          blockObj.addProsperityMarker(this.app.stage, i);
+          existingBlock.addProsperityMarker(this.app.stage, i);
         }
       }
 
       // 2> update owners
-      if (blockObj.owner != block.owner) {
-        blockObj.owner = block.owner;
+      if (existingBlock.owner != incomingBlock.owner) {
+        existingBlock.owner = incomingBlock.owner;
       }
 
       // 3> update soldiers and ships
       if (
-        blockObj.type == 'sea' &&
-        block.numShips != undefined &&
-        block.numShips >= 0 &&
-        blockObj.numShips != block.numShips
+        existingBlock.type == 'sea' &&
+        incomingBlock.type == 'sea' &&
+        incomingBlock.numShips != undefined &&
+        incomingBlock.numShips >= 0 &&
+        existingBlock.numShips !== incomingBlock.numShips
       ) {
-        if (block.numShips > 0) {
+        if (incomingBlock.numShips > 0) {
         }
 
-        if (blockObj.owner != undefined) {
-        } else if (block.numShips == 0 && blockObj.numShips != 0) {
+        if (existingBlock.owner != undefined) {
+        } else if (incomingBlock.numShips == 0 && existingBlock.numShips != 0) {
         }
-        // const color = this.properties.players[blockObj.owner].color;
+        // const color = this.properties.players[existingBlock.owner].color;
       }
 
       // 4> update buildings
-      if (blockObj.type == 'land') {
-        const landBlockObj: LandBlock = blockObj;
-        if (landBlockObj.numForts != block.numForts) {
+      if (existingBlock.type == 'land') {
+        const landBlockObj: LandBlock = existingBlock;
+        if (landBlockObj.numForts != incomingBlock.numForts) {
         }
       }
     }
-  }
+  }*/
 
   finishSetup(saveFlag: boolean = false) {
     this.backendService.setup(undefined, undefined, { save: saveFlag }, true);

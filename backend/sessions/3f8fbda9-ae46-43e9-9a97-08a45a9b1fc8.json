@@ -1,0 +1,2087 @@
+{
+  "width": 1000,
+  "height": 900,
+  "block_r": 48,
+  "gameId": "3f8fbda9-ae46-43e9-9a97-08a45a9b1fc8",
+  "playersInfo": [
+    {
+      "color": "red",
+      "name": "Ankit",
+      "id": 0
+    },
+    {
+      "color": "yellow",
+      "name": "Shivam",
+      "id": 1
+    },
+    {
+      "color": "green",
+      "name": "Nikhil",
+      "id": 2
+    },
+    {
+      "color": "blue",
+      "name": "Priyam",
+      "id": 3
+    },
+    {
+      "color": "black",
+      "name": "Vibhor",
+      "id": 4
+    }
+  ],
+  "creator": 0,
+  "playersAuth": {
+    "0": {
+      "joined": true,
+      "token": "Ankit",
+      "socketId": "2ooWJxyyhfflpNliAAAe"
+    },
+    "1": {
+      "joined": true,
+      "token": "Shivam",
+      "socketId": "eAJaM_FUTUctgiErAAAV"
+    },
+    "2": {
+      "joined": true,
+      "token": "Nikhil",
+      "socketId": "vxqCrB5kY1egY0AFAAAd"
+    },
+    "3": {
+      "joined": true,
+      "token": "Priyam",
+      "socketId": "9euSRlswWXVMdhHvAAAU"
+    },
+    "4": {
+      "joined": true,
+      "token": "Vibhor",
+      "socketId": "uJoUOtHO4jt7G1IoAAAc"
+    }
+  },
+  "players": {
+    "0": {
+      "token": "Ankit",
+      "id": 0,
+      "name": "Ankit",
+      "color": "red",
+      "gold": 4,
+      "prosperity_markers": 2,
+      "priests": 0,
+      "philosophers": 0,
+      "dice": 0,
+      "soldiers": 2,
+      "ships": 2,
+      "temples": 0,
+      "universities": 0,
+      "ports": 0,
+      "forts": 0,
+      "metropolitan": 0,
+      "creatures": [],
+      "soldiersAdded": 0,
+      "shipsAdded": 0,
+      "universitiesAdded": 0,
+      "templesAdded": 0,
+      "metropolitansAdded": 0,
+      "prevBidGod": "ATHENA",
+      "portsAdded": 0,
+      "fortsAdded": 0
+    },
+    "1": {
+      "token": "Shivam",
+      "id": 1,
+      "name": "Shivam",
+      "color": "yellow",
+      "gold": 6,
+      "prosperity_markers": 2,
+      "priests": 1,
+      "philosophers": 0,
+      "dice": 0,
+      "soldiers": 2,
+      "ships": 2,
+      "temples": 0,
+      "universities": 0,
+      "ports": 0,
+      "forts": 0,
+      "metropolitan": 0,
+      "creatures": [],
+      "soldiersAdded": 0,
+      "shipsAdded": 0,
+      "universitiesAdded": 0,
+      "templesAdded": 0,
+      "metropolitansAdded": 0,
+      "prevBidGod": "ZEUS",
+      "portsAdded": 0,
+      "fortsAdded": 0
+    },
+    "2": {
+      "token": "Nikhil",
+      "id": 2,
+      "name": "Nikhil",
+      "color": "green",
+      "gold": 3,
+      "prosperity_markers": 2,
+      "priests": 0,
+      "philosophers": 0,
+      "dice": 0,
+      "soldiers": 2,
+      "ships": 5,
+      "temples": 0,
+      "universities": 0,
+      "ports": 0,
+      "forts": 0,
+      "metropolitan": 0,
+      "creatures": [],
+      "soldiersAdded": 0,
+      "shipsAdded": 3,
+      "universitiesAdded": 0,
+      "templesAdded": 0,
+      "metropolitansAdded": 0,
+      "prevBidGod": "POSEIDON",
+      "portsAdded": 0,
+      "fortsAdded": 0
+    },
+    "3": {
+      "token": "Priyam",
+      "id": 3,
+      "name": "Priyam",
+      "color": "blue",
+      "gold": 5,
+      "prosperity_markers": 2,
+      "priests": 0,
+      "philosophers": 0,
+      "dice": 0,
+      "soldiers": 2,
+      "ships": 2,
+      "temples": 0,
+      "universities": 0,
+      "ports": 0,
+      "forts": 0,
+      "metropolitan": 0,
+      "creatures": [],
+      "soldiersAdded": 0,
+      "shipsAdded": 0,
+      "universitiesAdded": 0,
+      "templesAdded": 0,
+      "metropolitansAdded": 0,
+      "prevBidGod": "APOLLO",
+      "portsAdded": 0,
+      "fortsAdded": 0
+    },
+    "4": {
+      "token": "Vibhor",
+      "id": 4,
+      "name": "Vibhor",
+      "color": "black",
+      "gold": 2,
+      "prosperity_markers": 2,
+      "priests": 0,
+      "philosophers": 0,
+      "dice": 0,
+      "soldiers": 4,
+      "ships": 2,
+      "temples": 0,
+      "universities": 0,
+      "ports": 0,
+      "forts": 0,
+      "metropolitan": 0,
+      "creatures": [],
+      "soldiersAdded": 2,
+      "shipsAdded": 0,
+      "universitiesAdded": 0,
+      "templesAdded": 0,
+      "metropolitansAdded": 0,
+      "prevBidGod": "ARES",
+      "portsAdded": 0,
+      "fortsAdded": 0
+    }
+  },
+  "numPlayers": 5,
+  "gold": 84,
+  "prosperity_markers": 16,
+  "territory_markers": 15,
+  "priests": 17,
+  "philosophers": 17,
+  "soldiers": 40,
+  "ships": 40,
+  "ports": 10,
+  "forts": 10,
+  "temples": 10,
+  "universities": 10,
+  "metropolitan": 10,
+  "creatures_pile": [
+    "CHIMERA",
+    "CYCLOPS",
+    "DRYAD",
+    "THE_FATES",
+    "GIANT",
+    "GRIFFON",
+    "HARPY",
+    "PEGASUS",
+    "SATYR",
+    "SIREN",
+    "SPHINX",
+    "SYLPH",
+    "CHIRON",
+    "MEDUSA",
+    "MINOTAUR",
+    "POLYPHEMUS",
+    "THE_KRAKEN"
+  ],
+  "creatures_open": {},
+  "boardState": {
+    "stage": "ACTION",
+    "turnOrder": [
+      1,
+      2,
+      4,
+      0,
+      3
+    ],
+    "nextTurnOrder": [
+      1,
+      2
+    ],
+    "turn": 4,
+    "blockList": [],
+    "bids": [
+      {
+        "god": "ZEUS",
+        "maxBidAmount": 1,
+        "maxBidPlayerId": 1
+      },
+      {
+        "god": "POSEIDON",
+        "maxBidAmount": 1,
+        "maxBidPlayerId": 2
+      },
+      {
+        "god": "ARES",
+        "maxBidAmount": 1,
+        "maxBidPlayerId": 4
+      },
+      {
+        "god": "ATHENA",
+        "maxBidAmount": 1,
+        "maxBidPlayerId": 0
+      },
+      {
+        "god": "APOLLO",
+        "maxBidAmount": 1,
+        "maxBidPlayerId": 3
+      }
+    ],
+    "ownership": {},
+    "prosperity_markers_loc": [],
+    "territory_markers_loc": [],
+    "temple_building_loc": [],
+    "ports_building_loc": [],
+    "fort_building_loc": [],
+    "universities_building_loc": [],
+    "board": {
+      "width": 1000,
+      "height": 900,
+      "r": 48,
+      "ellipse": {
+        "x": 500,
+        "width": 490,
+        "y": 450,
+        "height": 440
+      },
+      "blocks": [
+        {
+          "type": "sea",
+          "id": 0,
+          "x": 500,
+          "y": 48,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 1,
+          "owner": 2,
+          "neighbours": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "id": 1,
+          "x": 572,
+          "y": 89.56921938165306,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            0,
+            3,
+            4,
+            6
+          ]
+        },
+        {
+          "id": 2,
+          "x": 428,
+          "y": 89.56921938165306,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            0,
+            3,
+            5,
+            8
+          ]
+        },
+        {
+          "type": "land",
+          "id": 3,
+          "x": 500,
+          "y": 131.1384387633061,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 0,
+          "groupSize": 4,
+          "owner": 2,
+          "neighbours": [
+            0,
+            1,
+            2,
+            6,
+            8,
+            10
+          ]
+        },
+        {
+          "id": 4,
+          "x": 644,
+          "y": 131.1384387633061,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            1,
+            6,
+            7,
+            11
+          ]
+        },
+        {
+          "id": 5,
+          "x": 356,
+          "y": 131.1384387633061,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            2,
+            8,
+            9,
+            13
+          ]
+        },
+        {
+          "type": "sea",
+          "id": 6,
+          "x": 572,
+          "y": 172.70765814495917,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "neighbours": [
+            1,
+            3,
+            4,
+            10,
+            11,
+            15
+          ]
+        },
+        {
+          "type": "land",
+          "id": 7,
+          "x": 716,
+          "y": 172.70765814495917,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 1,
+          "groupSize": 3,
+          "owner": 3,
+          "neighbours": [
+            4,
+            11,
+            12,
+            16
+          ]
+        },
+        {
+          "type": "land",
+          "id": 8,
+          "x": 428,
+          "y": 172.70765814495917,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 0,
+          "groupSize": 4,
+          "owner": 2,
+          "neighbours": [
+            2,
+            3,
+            5,
+            10,
+            13,
+            18
+          ]
+        },
+        {
+          "id": 9,
+          "x": 284,
+          "y": 172.70765814495917,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            5,
+            13,
+            14,
+            19
+          ]
+        },
+        {
+          "type": "land",
+          "id": 10,
+          "x": 500,
+          "y": 214.27687752661222,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 0,
+          "groupSize": 4,
+          "owner": 2,
+          "neighbours": [
+            3,
+            6,
+            8,
+            15,
+            18,
+            21
+          ]
+        },
+        {
+          "type": "land",
+          "id": 11,
+          "x": 644,
+          "y": 214.27687752661222,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 1,
+          "groupSize": 3,
+          "owner": 3,
+          "neighbours": [
+            4,
+            6,
+            7,
+            15,
+            16,
+            22
+          ]
+        },
+        {
+          "type": "land",
+          "id": 12,
+          "x": 788,
+          "y": 214.27687752661222,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 1,
+          "groupSize": 3,
+          "owner": 3,
+          "neighbours": [
+            7,
+            16,
+            17,
+            23
+          ]
+        },
+        {
+          "id": 13,
+          "x": 356,
+          "y": 214.27687752661222,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            5,
+            8,
+            9,
+            18,
+            19,
+            24
+          ]
+        },
+        {
+          "type": "land",
+          "id": 14,
+          "x": 212,
+          "y": 214.27687752661222,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 2,
+          "groupSize": 3,
+          "owner": 4,
+          "neighbours": [
+            9,
+            19,
+            20,
+            25
+          ]
+        },
+        {
+          "id": 15,
+          "x": 572,
+          "y": 255.84609690826528,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            6,
+            10,
+            11,
+            21,
+            22,
+            26
+          ]
+        },
+        {
+          "id": 16,
+          "x": 716,
+          "y": 255.84609690826528,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            7,
+            11,
+            12,
+            22,
+            23,
+            27
+          ]
+        },
+        {
+          "type": "sea",
+          "id": 17,
+          "x": 860,
+          "y": 255.84609690826528,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 1,
+          "owner": 3,
+          "neighbours": [
+            12,
+            23,
+            28
+          ]
+        },
+        {
+          "id": 18,
+          "x": 428,
+          "y": 255.84609690826528,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            8,
+            10,
+            13,
+            21,
+            24,
+            29
+          ]
+        },
+        {
+          "type": "land",
+          "id": 19,
+          "x": 284,
+          "y": 255.84609690826528,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 2,
+          "groupSize": 3,
+          "owner": 4,
+          "neighbours": [
+            9,
+            13,
+            14,
+            24,
+            25,
+            30
+          ]
+        },
+        {
+          "type": "sea",
+          "id": 20,
+          "x": 140,
+          "y": 255.84609690826528,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 1,
+          "owner": 4,
+          "neighbours": [
+            14,
+            25,
+            31
+          ]
+        },
+        {
+          "id": 21,
+          "x": 500,
+          "y": 297.41531628991834,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            10,
+            15,
+            18,
+            26,
+            29,
+            32
+          ]
+        },
+        {
+          "id": 22,
+          "x": 644,
+          "y": 297.41531628991834,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            11,
+            15,
+            16,
+            26,
+            27,
+            33
+          ]
+        },
+        {
+          "id": 23,
+          "x": 788,
+          "y": 297.41531628991834,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            12,
+            16,
+            17,
+            27,
+            28,
+            34
+          ]
+        },
+        {
+          "type": "land",
+          "id": 24,
+          "x": 356,
+          "y": 297.41531628991834,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 2,
+          "groupSize": 3,
+          "owner": 4,
+          "neighbours": [
+            13,
+            18,
+            19,
+            29,
+            30,
+            36
+          ]
+        },
+        {
+          "id": 25,
+          "x": 212,
+          "y": 297.41531628991834,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            14,
+            19,
+            20,
+            30,
+            31,
+            37
+          ]
+        },
+        {
+          "type": "land",
+          "id": 26,
+          "x": 572,
+          "y": 338.9845356715714,
+          "r": 48,
+          "numProsperityMarkers": 1,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 3,
+          "groupSize": 2,
+          "neighbours": [
+            15,
+            21,
+            22,
+            32,
+            33,
+            39
+          ]
+        },
+        {
+          "id": 27,
+          "x": 716,
+          "y": 338.9845356715714,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "owner": 1,
+          "neighbours": [
+            16,
+            22,
+            23,
+            33,
+            34,
+            40
+          ]
+        },
+        {
+          "id": 28,
+          "x": 860,
+          "y": 338.9845356715714,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            17,
+            23,
+            34,
+            35,
+            41
+          ]
+        },
+        {
+          "id": 29,
+          "x": 428,
+          "y": 338.9845356715714,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            18,
+            21,
+            24,
+            32,
+            36,
+            42
+          ]
+        },
+        {
+          "id": 30,
+          "x": 284,
+          "y": 338.9845356715714,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            19,
+            24,
+            25,
+            36,
+            37,
+            43
+          ]
+        },
+        {
+          "type": "land",
+          "id": 31,
+          "x": 140,
+          "y": 338.9845356715714,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 4,
+          "groupSize": 4,
+          "owner": 1,
+          "neighbours": [
+            20,
+            25,
+            37,
+            38,
+            44
+          ]
+        },
+        {
+          "id": 32,
+          "x": 500,
+          "y": 380.55375505322445,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            21,
+            26,
+            29,
+            39,
+            42,
+            45
+          ]
+        },
+        {
+          "type": "land",
+          "id": 33,
+          "x": 644,
+          "y": 380.55375505322445,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 3,
+          "groupSize": 2,
+          "neighbours": [
+            22,
+            26,
+            27,
+            39,
+            40,
+            46
+          ]
+        },
+        {
+          "type": "land",
+          "id": 34,
+          "x": 788,
+          "y": 380.55375505322445,
+          "r": 48,
+          "numProsperityMarkers": 2,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 5,
+          "groupSize": 1,
+          "owner": 1,
+          "neighbours": [
+            23,
+            27,
+            28,
+            40,
+            41,
+            47
+          ]
+        },
+        {
+          "id": 35,
+          "x": 932,
+          "y": 380.55375505322445,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            28,
+            41,
+            48
+          ]
+        },
+        {
+          "id": 36,
+          "x": 356,
+          "y": 380.55375505322445,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            24,
+            29,
+            30,
+            42,
+            43,
+            49
+          ]
+        },
+        {
+          "id": 37,
+          "x": 212,
+          "y": 380.55375505322445,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            25,
+            30,
+            31,
+            43,
+            44,
+            50
+          ]
+        },
+        {
+          "id": 38,
+          "x": 68,
+          "y": 380.55375505322445,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            31,
+            44,
+            51
+          ]
+        },
+        {
+          "id": 39,
+          "x": 572,
+          "y": 422.1229744348775,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "owner": 4,
+          "neighbours": [
+            26,
+            32,
+            33,
+            45,
+            46,
+            52
+          ]
+        },
+        {
+          "id": 40,
+          "x": 716,
+          "y": 422.1229744348775,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            27,
+            33,
+            34,
+            46,
+            47,
+            53
+          ]
+        },
+        {
+          "id": 41,
+          "x": 860,
+          "y": 422.1229744348775,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            28,
+            34,
+            35,
+            47,
+            48,
+            54
+          ]
+        },
+        {
+          "id": 42,
+          "x": 428,
+          "y": 422.1229744348775,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            29,
+            32,
+            36,
+            45,
+            49,
+            55
+          ]
+        },
+        {
+          "type": "land",
+          "id": 43,
+          "x": 284,
+          "y": 422.1229744348775,
+          "r": 48,
+          "numProsperityMarkers": 2,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 6,
+          "groupSize": 1,
+          "neighbours": [
+            30,
+            36,
+            37,
+            49,
+            50,
+            56
+          ]
+        },
+        {
+          "type": "land",
+          "id": 44,
+          "x": 140,
+          "y": 422.1229744348775,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 4,
+          "groupSize": 4,
+          "owner": 1,
+          "neighbours": [
+            31,
+            37,
+            38,
+            50,
+            51,
+            57
+          ]
+        },
+        {
+          "id": 45,
+          "x": 500,
+          "y": 463.69219381653056,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            32,
+            39,
+            42,
+            52,
+            55,
+            58
+          ]
+        },
+        {
+          "id": 46,
+          "x": 644,
+          "y": 463.69219381653056,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            33,
+            39,
+            40,
+            52,
+            53,
+            59
+          ]
+        },
+        {
+          "id": 47,
+          "x": 788,
+          "y": 463.69219381653056,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            34,
+            40,
+            41,
+            53,
+            54,
+            60
+          ]
+        },
+        {
+          "id": 48,
+          "x": 932,
+          "y": 463.69219381653056,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            35,
+            41,
+            54,
+            61
+          ]
+        },
+        {
+          "id": 49,
+          "x": 356,
+          "y": 463.69219381653056,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            36,
+            42,
+            43,
+            55,
+            56,
+            62
+          ]
+        },
+        {
+          "id": 50,
+          "x": 212,
+          "y": 463.69219381653056,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            37,
+            43,
+            44,
+            56,
+            57,
+            63
+          ]
+        },
+        {
+          "id": 51,
+          "x": 68,
+          "y": 463.69219381653056,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            38,
+            44,
+            57,
+            64
+          ]
+        },
+        {
+          "type": "land",
+          "id": 52,
+          "x": 572,
+          "y": 505.2614131981836,
+          "r": 48,
+          "numProsperityMarkers": 1,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 7,
+          "groupSize": 2,
+          "owner": 4,
+          "neighbours": [
+            39,
+            45,
+            46,
+            58,
+            59,
+            65
+          ]
+        },
+        {
+          "id": 53,
+          "x": 716,
+          "y": 505.2614131981836,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            40,
+            46,
+            47,
+            59,
+            60,
+            66
+          ]
+        },
+        {
+          "type": "land",
+          "id": 54,
+          "x": 860,
+          "y": 505.2614131981836,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 8,
+          "groupSize": 7,
+          "owner": 0,
+          "neighbours": [
+            41,
+            47,
+            48,
+            60,
+            61,
+            67
+          ]
+        },
+        {
+          "type": "land",
+          "id": 55,
+          "x": 428,
+          "y": 505.2614131981836,
+          "r": 48,
+          "numProsperityMarkers": 2,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 9,
+          "groupSize": 1,
+          "owner": 0,
+          "neighbours": [
+            42,
+            45,
+            49,
+            58,
+            62,
+            68
+          ]
+        },
+        {
+          "id": 56,
+          "x": 284,
+          "y": 505.2614131981836,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            43,
+            49,
+            50,
+            62,
+            63,
+            69
+          ]
+        },
+        {
+          "type": "land",
+          "id": 57,
+          "x": 140,
+          "y": 505.2614131981836,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 4,
+          "groupSize": 4,
+          "owner": 1,
+          "neighbours": [
+            44,
+            50,
+            51,
+            63,
+            64,
+            70
+          ]
+        },
+        {
+          "id": 58,
+          "x": 500,
+          "y": 546.8306325798367,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            45,
+            52,
+            55,
+            65,
+            68,
+            71
+          ]
+        },
+        {
+          "type": "land",
+          "id": 59,
+          "x": 644,
+          "y": 546.8306325798367,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 7,
+          "groupSize": 2,
+          "owner": 4,
+          "neighbours": [
+            46,
+            52,
+            53,
+            65,
+            66,
+            72
+          ]
+        },
+        {
+          "type": "land",
+          "id": 60,
+          "x": 788,
+          "y": 546.8306325798367,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 8,
+          "groupSize": 7,
+          "owner": 0,
+          "neighbours": [
+            47,
+            53,
+            54,
+            66,
+            67,
+            73
+          ]
+        },
+        {
+          "id": 61,
+          "x": 932,
+          "y": 546.8306325798367,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            48,
+            54,
+            67
+          ]
+        },
+        {
+          "id": 62,
+          "x": 356,
+          "y": 546.8306325798367,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            49,
+            55,
+            56,
+            68,
+            69,
+            74
+          ]
+        },
+        {
+          "id": 63,
+          "x": 212,
+          "y": 546.8306325798367,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "owner": 1,
+          "neighbours": [
+            50,
+            56,
+            57,
+            69,
+            70,
+            75
+          ]
+        },
+        {
+          "id": 64,
+          "x": 68,
+          "y": 546.8306325798367,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            51,
+            57,
+            70
+          ]
+        },
+        {
+          "id": 65,
+          "x": 572,
+          "y": 588.3998519614897,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            52,
+            58,
+            59,
+            71,
+            72,
+            76
+          ]
+        },
+        {
+          "id": 66,
+          "x": 716,
+          "y": 588.3998519614897,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            53,
+            59,
+            60,
+            72,
+            73,
+            77
+          ]
+        },
+        {
+          "type": "land",
+          "id": 67,
+          "x": 860,
+          "y": 588.3998519614897,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 8,
+          "groupSize": 7,
+          "owner": 0,
+          "neighbours": [
+            54,
+            60,
+            61,
+            73,
+            78
+          ]
+        },
+        {
+          "id": 68,
+          "x": 428,
+          "y": 588.3998519614897,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "owner": 0,
+          "neighbours": [
+            55,
+            58,
+            62,
+            71,
+            74,
+            79
+          ]
+        },
+        {
+          "id": 69,
+          "x": 284,
+          "y": 588.3998519614897,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            56,
+            62,
+            63,
+            74,
+            75,
+            80
+          ]
+        },
+        {
+          "type": "land",
+          "id": 70,
+          "x": 140,
+          "y": 588.3998519614897,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 4,
+          "groupSize": 4,
+          "owner": 1,
+          "neighbours": [
+            57,
+            63,
+            64,
+            75,
+            81
+          ]
+        },
+        {
+          "type": "land",
+          "id": 71,
+          "x": 500,
+          "y": 629.9690713431428,
+          "r": 48,
+          "numProsperityMarkers": 1,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 10,
+          "groupSize": 2,
+          "neighbours": [
+            58,
+            65,
+            68,
+            76,
+            79,
+            82
+          ]
+        },
+        {
+          "id": 72,
+          "x": 644,
+          "y": 629.9690713431428,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            59,
+            65,
+            66,
+            76,
+            77,
+            83
+          ]
+        },
+        {
+          "type": "land",
+          "id": 73,
+          "x": 788,
+          "y": 629.9690713431428,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 8,
+          "groupSize": 7,
+          "owner": 0,
+          "neighbours": [
+            60,
+            66,
+            67,
+            77,
+            78,
+            84
+          ]
+        },
+        {
+          "id": 74,
+          "x": 356,
+          "y": 629.9690713431428,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            62,
+            68,
+            69,
+            79,
+            80,
+            85
+          ]
+        },
+        {
+          "id": 75,
+          "x": 212,
+          "y": 629.9690713431428,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            63,
+            69,
+            70,
+            80,
+            81,
+            86
+          ]
+        },
+        {
+          "id": 76,
+          "x": 572,
+          "y": 671.5382907247958,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            65,
+            71,
+            72,
+            82,
+            83,
+            87
+          ],
+          "owner": 2
+        },
+        {
+          "id": 77,
+          "x": 716,
+          "y": 671.5382907247958,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "owner": 0,
+          "neighbours": [
+            66,
+            72,
+            73,
+            83,
+            84,
+            88
+          ]
+        },
+        {
+          "type": "sea",
+          "id": 78,
+          "x": 860,
+          "y": 671.5382907247958,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 1,
+          "neighbours": [
+            67,
+            73,
+            84
+          ]
+        },
+        {
+          "type": "land",
+          "id": 79,
+          "x": 428,
+          "y": 671.5382907247958,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 10,
+          "groupSize": 2,
+          "neighbours": [
+            68,
+            71,
+            74,
+            82,
+            85,
+            89
+          ]
+        },
+        {
+          "type": "land",
+          "id": 80,
+          "x": 284,
+          "y": 671.5382907247958,
+          "r": 48,
+          "numProsperityMarkers": 1,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 11,
+          "groupSize": 2,
+          "owner": 3,
+          "neighbours": [
+            69,
+            74,
+            75,
+            85,
+            86,
+            90
+          ]
+        },
+        {
+          "type": "sea",
+          "id": 81,
+          "x": 140,
+          "y": 671.5382907247958,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 1,
+          "neighbours": [
+            70,
+            75,
+            86
+          ]
+        },
+        {
+          "id": 82,
+          "x": 500,
+          "y": 713.1075101064489,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "owner": 2,
+          "neighbours": [
+            71,
+            76,
+            79,
+            87,
+            89,
+            91
+          ]
+        },
+        {
+          "id": 83,
+          "x": 644,
+          "y": 713.1075101064489,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            72,
+            76,
+            77,
+            87,
+            88,
+            92
+          ],
+          "owner": 2
+        },
+        {
+          "id": 84,
+          "x": 788,
+          "y": 713.1075101064489,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            73,
+            77,
+            78,
+            88
+          ]
+        },
+        {
+          "type": "sea",
+          "id": 85,
+          "x": 356,
+          "y": 713.1075101064489,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numShips": 1,
+          "owner": 3,
+          "neighbours": [
+            74,
+            79,
+            80,
+            89,
+            90,
+            93
+          ]
+        },
+        {
+          "id": 86,
+          "x": 212,
+          "y": 713.1075101064489,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            75,
+            80,
+            81,
+            90
+          ]
+        },
+        {
+          "type": "land",
+          "id": 87,
+          "x": 572,
+          "y": 754.676729488102,
+          "r": 48,
+          "numProsperityMarkers": 1,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 0,
+          "groupId": 12,
+          "groupSize": 2,
+          "owner": 2,
+          "neighbours": [
+            76,
+            82,
+            83,
+            91,
+            92,
+            94
+          ]
+        },
+        {
+          "id": 88,
+          "x": 716,
+          "y": 754.676729488102,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            77,
+            83,
+            84,
+            92
+          ]
+        },
+        {
+          "id": 89,
+          "x": 428,
+          "y": 754.676729488102,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            79,
+            82,
+            85,
+            91,
+            93,
+            95
+          ]
+        },
+        {
+          "type": "land",
+          "id": 90,
+          "x": 284,
+          "y": 754.676729488102,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 11,
+          "groupSize": 2,
+          "owner": 3,
+          "neighbours": [
+            80,
+            85,
+            86,
+            93
+          ]
+        },
+        {
+          "id": 91,
+          "x": 500,
+          "y": 796.245948869755,
+          "r": 48,
+          "numShips": 1,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            82,
+            87,
+            89,
+            94,
+            95
+          ],
+          "owner": 2
+        },
+        {
+          "type": "land",
+          "id": 92,
+          "x": 644,
+          "y": 796.245948869755,
+          "r": 48,
+          "numProsperityMarkers": 0,
+          "numForts": 0,
+          "numPorts": 0,
+          "numUniversities": 0,
+          "numTemples": 0,
+          "numSoldiers": 1,
+          "groupId": 12,
+          "groupSize": 2,
+          "owner": 2,
+          "neighbours": [
+            83,
+            87,
+            88,
+            94
+          ]
+        },
+        {
+          "id": 93,
+          "x": 356,
+          "y": 796.245948869755,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            85,
+            89,
+            90,
+            95
+          ]
+        },
+        {
+          "id": 94,
+          "x": 572,
+          "y": 837.8151682514081,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 0,
+          "type": "sea",
+          "neighbours": [
+            87,
+            91,
+            92
+          ]
+        },
+        {
+          "type": "sea",
+          "id": 95,
+          "x": 428,
+          "y": 837.8151682514081,
+          "r": 48,
+          "numShips": 0,
+          "numProsperityMarkers": 1,
+          "neighbours": [
+            89,
+            91,
+            93
+          ]
+        }
+      ]
+    },
+    "fight": {
+      "players": []
+    }
+  },
+  "logs": [
+    "Vibhor placed bid on ARES",
+    "Nikhil placed bid on POSEIDON",
+    "Shivam placed bid on ZEUS",
+    "Ankit placed bid on ATHENA",
+    "[ZEUS] Priest card given to Shivam",
+    "Shivam action turn completed",
+    "Shivam given 2 coins for prosperity markers",
+    "Nikhil action turn completed",
+    "Nikhil given 2 coins for prosperity markers"
+  ]
+}

@@ -1,5 +1,10 @@
-const { findConnected } = require("./Game");
-const { addSoldier, addShip, getGroupIdbyBlockId } = require("./helper/block");
+const {
+    addSoldier,
+    addShip,
+    getBlocksByGroupId,
+    removeSoldier,
+} = require("./helper/block");
+const { sendError } = require("./helper/comms");
 
 const endTurn = (game, playerId) => {
     if (game.boardState.turn != playerId) {
@@ -37,7 +42,10 @@ const earnGold = (game, playerId) => {
     game.players[playerId].gold += earnings;
     if (earnings > 0) {
         game.logs.push(
-            game.players[playerId].name + " earned " + earnings + " coins"
+            game.players[playerId].name +
+                " given " +
+                earnings +
+                " coins for prosperity markers"
         );
     }
 };
@@ -98,8 +106,18 @@ const buyCard = (game, playerId, cardName) => {
 };
 
 const placePlayerSoldier = (game, playerId, block) => {
+    if (block.type != "land" || block.owner !== playerId) return;
+
+    if (game.players[playerId].soldiersAdded > 0) {
+        if (
+            game.players[playerId].gold < game.players[playerId].soldiersAdded
+        ) {
+            sendError(game, playerId, "Not enough gold");
+            return;
+        }
+    }
+
     addSoldier(game, block, playerId);
-    game.players[playerId].soldiersAdded++;
     if (game.players[playerId].soldiersAdded > 1) {
         game.players[playerId].gold -= game.players[playerId].soldiersAdded;
         game.gold += game.players[playerId].soldiersAdded;
@@ -107,19 +125,52 @@ const placePlayerSoldier = (game, playerId, block) => {
 };
 
 const placePlayerShip = (game, playerId, block) => {
+    if (block.type != "sea") return;
+
+    // check if ship can be placed on `block`
+    let validPlacement = false; // check if block is in the surrounding sea from a controlled island
+    for (let neighId of block.neighbours) {
+        let neigh = game.boardState.board.blocks[neighId];
+        if (
+            neigh &&
+            neigh.type == "land" &&
+            neigh.owner === playerId &&
+            (block.owner === undefined || block.owner === playerId)
+        ) {
+            validPlacement = true;
+            break;
+        }
+    }
+
+    if (!validPlacement) {
+        sendError(game, playerId, "You cannot place ship here");
+        return;
+    }
+
+    if (game.players[playerId].shipsAdded > 0) {
+        if (
+            game.players[playerId].gold <
+            game.players[playerId].shipsAdded - 1
+        ) {
+            sendError(game, playerId, "Not enough gold");
+            return;
+        }
+    }
+
     addShip(game, block, playerId);
-    game.players[playerId].shipsAdded++;
     if (game.players[playerId].shipsAdded > 1) {
         game.players[playerId].gold -= game.players[playerId].shipsAdded - 1;
         game.gold += game.players[playerId].shipsAdded - 1;
-    } 
+    }
+
+    console.log("afterx2: " + game.players[playerId].ships);
 };
 
 const placePlayerFort = (game, playerId, block) => {
     addFort(game, block, playerId);
     const player = game.players[playerId];
     player.gold -= 2;
-    game.gold +=2;
+    game.gold += 2;
     game.ports--;
     sendGameObjToPlayers(game);
 };
@@ -149,57 +200,102 @@ const placePlayerUniversity = (game, playerId, block) => {
     game.gold += 2;
     game.universities--;
     sendGameObjToPlayers(game);
-}
-
-
-const moveSoldier = (game, playerId, sourceBlockId, targetBlockId, numSoldiers) => {
-    
-    if(pathExistsBetweenIslands(game, playerId, sourceBlockId, targetBlockId))
-        return true;
-    else
-        return false;
 };
 
-const pathExistBetweenBlocks = (game, playerId, sourceBlockId, targetBlockId) => {
+const moveSoldier = (
+    game,
+    playerId,
+    sourceBlockId,
+    targetBlockId,
+    numSoldiers
+) => {
+    const sourceBlock = game.boardState.board.blocks[sourceBlockId];
+    const targetBlock = game.boardState.board.blocks[targetBlockId];
 
-    const dMat = game.distanceMatrix;
-    const connectedBlocks = new Set();
+    const sourceGroupId = sourceBlock.groupId;
+    const targetGroupId = targetBlock.groupId;
 
-    if(sourceBlockId == targetBlockId)
-        return true;
-
-    findConnected(sourceBlockId, dMat, connectedBlocks);
-
-    for(let j=0; j < connectedBlocks.length; j++){
-        if(connectedBlocks[j].type == sea && connectedBlocks[j].owner == playerId && connectedBlocks[j].numShips >= 1){
-            pathExistBetweenBlocks(game, playerId, connectedBlocks[j], targetBlockId);
-        }
-        else if (connectedBlocks[j].id == targetBlockId)
-            return true;
+    if (
+        sourceGroupId == targetGroupId ||
+        sourceBlock.type != "land" ||
+        targetBlock.type != "land"
+    ) {
+        return;
     }
-    return false;
-}
 
-const pathExistsBetweenIslands = (game, playerId, sourceBlockId, targetBlockId) => {
+    const islandSoldiersCount = getBlocksByGroupId(game, sourceGroupId).reduce(
+        (a, b) => a.numSoldiers + b.numSoldiers,
+        0
+    );
+    if (islandSoldiersCount < numSoldiers) {
+        sendError(game, playerId, "Not enough soldiers on the island to move");
+        return;
+    }
 
-    const sourceGroupId = game.boardState.board.blocks[sourceBlockId].groupId;
-    const targetGroupId = game.boardState.board.blocks[targetBlockId].groupId;
+    // check if path exists between islands
+    if (
+        !_pathExistsBetweenIslands(game, playerId, sourceGroupId, targetGroupId)
+    ) {
+        return;
+    }
+
+    // check if target is occupied by another player
+    if (targetBlock.owner != undefined && targetBlock.owner != playerId) {
+        game.boardState.fight["blockId"] = targetBlock;
+        game.boardState.fight["players"] = [playerId, targetBlock.owner];
+        return;
+    }
+
+    // if all validations passed, move soldiers
+    while (numSoldiers-- > 0) {
+        removeSoldier(game, sourceBlock, playerId);
+        addSoldier(game, sourceBlock, playerId);
+    }
+};
+
+const _pathExistsBetweenIslands = (
+    game,
+    playerId,
+    sourceGroupId,
+    targetGroupId
+) => {
+    if (sourceGroupId === targetGroupId) return true;
 
     const sourceGroupBlocks = game.boardState.board.blocks.filter(
         (block) => block.groupId == sourceGroupId
     );
-    const targetGroupBlocks = game.boardState.board.blocks.filter(
-        (block) => block.groupId == targetGroupId
-    );
 
-    for (let i = 0; i < sourceGroupBlocks.length; i++) {
-        for (let j = 0; j < targetGroupBlocks.length; j++) {
-            if(pathExistBetweenBlocks(game, playerId, sourceGroupBlocks[i], targetGroupBlocks[j]))
-                return true;
-            else
-                return false;
+    const targetGroupBlockIds = game.boardState.board.blocks
+        .filter((block) => block.groupId == targetGroupId)
+        .map((block) => block.id);
+
+    // bfs for every source block to reach any target block
+    for (let sourceBlock of sourceGroupBlocks) {
+        const visited = new Set();
+        const queue = [];
+        queue.push(sourceBlock);
+        while (queue.length > 0) {
+            let size = queue.length;
+            while (size-- > 0) {
+                let block = queue.shift();
+                visited.add(block.id);
+                for (let neighId of block.neighbours) {
+                    const neigh = game.boardState.board.blocks[neighId];
+                    if (targetGroupBlockIds.includes(neighId)) return true;
+                    if (visited.has(neighId)) continue;
+                    if (
+                        neigh.type !== "sea" ||
+                        neigh.owner !== playerId ||
+                        neigh.numShips <= 0
+                    )
+                        continue;
+                    queue.push(neigh);
+                }
+            }
         }
     }
+
+    return false;
 };
 
 const moveShip = (game, playerId, sourceBlock, targetBlock, numShips) => {
@@ -220,3 +316,4 @@ exports.buyCard = buyCard;
 exports.placePlayerSoldier = placePlayerSoldier;
 exports.placePlayerShip = placePlayerShip;
 exports.placePlayerFort = placePlayerFort;
+exports.moveSoldier = moveSoldier;

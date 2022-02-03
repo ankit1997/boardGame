@@ -17,6 +17,7 @@ import { ToastModule } from 'primeng/toast';
 import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { BlockUIModule } from 'primeng/blockui';
 
 import { AppComponent } from './app.component';
 
@@ -42,6 +43,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     InputTextModule,
     CheckboxModule,
     ScrollPanelModule,
+    BlockUIModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
