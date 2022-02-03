@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
   public doneCounter: number;
   public buyCardCounter: number;
   public blockUI: boolean = false;
+  public diceOutput: number = -1;
 
   public COLORS = ['red', 'yellow', 'green', 'blue', 'black'];
   public COLOR_DOTS = {
@@ -93,6 +94,14 @@ export class AppComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
+        detail: message,
+      });
+    });
+    //
+    this.backendService.socket.on('info', (message: string) => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Update',
         detail: message,
       });
     });
@@ -251,6 +260,7 @@ export class AppComponent implements OnInit {
     boardState.turn = response.boardState.turn;
     boardState.bids = response.boardState.bids;
     boardState.board = response.boardState.board;
+    boardState.fight = response.boardState.fight;
     this.properties.boardState = boardState;
 
     const playerId = Number.parseInt(Object.keys(response.players)[0]);
@@ -357,8 +367,7 @@ export class AppComponent implements OnInit {
       .load(this.setup_board.bind(this));
 
     this.app.renderer.view.addEventListener('click', (e) => {
-      //
-      console.log('clicked');
+      // console.log('clicked');
       if (window.scrollY !== 0) {
         this.messageService.add({
           severity: 'error',
@@ -463,6 +472,11 @@ export class AppComponent implements OnInit {
   }
 
   setup_board() {
+    this.diceOutput = -1;
+    this.placingBuilding = '';
+    this.placingShip = false;
+    this.placingSoldier = false;
+
     this.app.stage.removeChildren();
     //
     this.graphics.lineStyle(0);
@@ -540,7 +554,7 @@ export class AppComponent implements OnInit {
       }
 
       for (let piece of block.pieces) {
-        piece.draw(this.app.stage);
+        piece.draw(this.app.stage, this);
       }
     }
 
@@ -613,8 +627,13 @@ export class AppComponent implements OnInit {
     return blocks[0];
   }
 
-  dice(): number {
-    return Math.floor((Math.random() - 0.0000001) * 4);
+  diceRoll() {
+    let i = 3;
+    while (i-- > 0) {
+      this.diceOutput = Math.floor((Math.random() - 0.0000001) * 4);
+      var now = new Date().getTime();
+      while (new Date().getTime() < now + 600) {}
+    }
   }
 
   placeBid(oldBid: Bid) {
@@ -668,6 +687,11 @@ export class AppComponent implements OnInit {
       this.buyCardCounter = 0;
     }
   }
+
+  // fight(blockId: number, players: number[]) {
+  //   if (blockId >= 0 && players && players.length == 2)
+  //     this.backendService.fight(blockId, players);
+  // }
 
   copyToClipboard(text: string) {
     navigator.clipboard.writeText(text);

@@ -1,4 +1,6 @@
 import { Container, Loader, SCALE_MODES, Sprite, Texture } from 'pixi.js';
+import { AppComponent } from './app.component';
+import { Movement } from './utilities/Movement';
 
 const resources = Loader.shared.resources;
 
@@ -12,7 +14,7 @@ export class Piece {
     this.path = 'assets/images/' + this.color + '/' + this.type + '.png';
   }
 
-  draw(container: Container) {
+  draw(container: Container, app: AppComponent) {
     if (this.x == undefined || this.y == undefined) return;
 
     const texture: Texture = resources[this.path].texture;
@@ -30,10 +32,13 @@ export class Piece {
 
     if (this.type == 'ship' || this.type == 'soldier') {
       this.sprite.interactive = false;
+      this.sprite.buttonMode = true;
       this.sprite
-        .on('pointerdown', onDragStart)
-        .on('pointerup', onDragEnd)
-        //.on('pointerupoutside', onDragEnd)
+        .on('pointerdown', (event) =>
+          onDragStart(this.sprite, event, this.x, this.y)
+        )
+        .on('pointerup', onDragEnd.bind(this.sprite, app))
+        .on('pointerupoutside', onDragEnd.bind(this.sprite, app))
         .on('pointermove', onDragMove);
     }
 
@@ -44,20 +49,37 @@ export class Piece {
   }
 }
 
-function onDragStart(event) {
-  // store a reference to the data
-  // the reason for this is because of multitouch
-  // we want to track the movement of this particular touch
-  this.data = event.data;
-  // this.alpha = 0.5;
-  this.dragging = true;
+function onDragStart(ref, event, x, y) {
+  ref.data = event.data;
+  ref.dragging = true;
+  ref.startPos = { x: x, y: y };
+  console.log('started');
 }
 
-function onDragEnd() {
-  // this.alpha = 1;
+function onDragEnd(app: AppComponent) {
   this.dragging = false;
-  // set the interaction data to null
   this.data = null;
+  console.log('end');
+
+  // validate if path is correct
+  const sourceBlock = app.getBlockAtXY(this.startPos.x, this.startPos.y);
+  const targetBlock = app.getBlockAtXY(this.x, this.y);
+
+  // console.log(sourceBlock);
+  // console.log(targetBlock);
+  const validationResponse = Movement.validateSoldierMovement(
+    app.properties,
+    app.playerState.id,
+    sourceBlock.id,
+    targetBlock.id,
+    app
+  );
+  // console.log(validationResponse);
+  if (validationResponse == 'NA' || validationResponse == 'NO_PATH') {
+    this.x = this.startPos.x;
+    this.y = this.startPos.y;
+  } else if (validationResponse == undefined) {
+  }
 }
 
 function onDragMove() {
@@ -75,8 +97,8 @@ export class Ship extends Piece {
     super(color, 'ship');
   }
 
-  draw(container: Container) {
-    super.draw(container);
+  draw(container: Container, app: AppComponent) {
+    super.draw(container, app);
   }
 }
 
@@ -87,7 +109,7 @@ export class Soldier extends Piece {
     super(color, 'soldier');
   }
 
-  draw(container: Container) {
-    super.draw(container);
+  draw(container: Container, app: AppComponent) {
+    super.draw(container, app);
   }
 }

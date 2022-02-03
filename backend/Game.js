@@ -284,7 +284,7 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             board == undefined
                 ? setupBoard(game.width, game.height, game.block_r)
                 : board,
-        fight: { blockId: undefined, players: [] },
+        fight: { blockId: undefined, players: [], dice: [] },
     };
     game.boardState.turn = game.boardState.turnOrder[0];
     game.logs = [];

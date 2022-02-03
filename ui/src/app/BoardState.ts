@@ -12,6 +12,7 @@ export class BoardState {
   prosperity_markers_loc: number[];
   territory_markers_loc: number[];
   board: any;
+  fight: any;
 }
 
 export class Bid {

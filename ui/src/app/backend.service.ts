@@ -27,4 +27,8 @@ export class BackendService {
   action(actionObj: any) {
     this.socket.emit('action', actionObj);
   }
+
+  fight(blockId: number, players: number[], result: number) {
+    this.socket.emit('fight', blockId, players, result);
+  }
 }

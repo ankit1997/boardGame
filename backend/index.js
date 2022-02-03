@@ -27,7 +27,11 @@ const {
     removeSoldier,
     removeShip,
 } = require("./helper/block");
-const { sendGameObjToPlayers, sendGameObjToPlayer } = require("./helper/comms");
+const {
+    sendGameObjToPlayers,
+    sendGameObjToPlayer,
+    sendInfo,
+} = require("./helper/comms");
 const { io, http } = require("./helper/io");
 
 // load environment variables
@@ -53,7 +57,6 @@ io.on("connection", (socket) => {
 
     socket.on("initialize", (width, height, playersInfo) => {
         try {
-            console.log("initialize");
             const gameId = uuidv4();
             const game = getNewGame(gameId, width, height, playersInfo);
             console.log("Game created with ID = " + gameId);
@@ -76,7 +79,6 @@ io.on("connection", (socket) => {
 
     socket.on("authenticate", (gameId, name, token) => {
         try {
-            console.log("authenticate");
             if (!fs.existsSync(getGamePath(gameId))) {
                 return;
             }
@@ -95,7 +97,6 @@ io.on("connection", (socket) => {
 
     socket.on("setup", (blockId, marker, obj, completeFlag) => {
         try {
-            console.log("setup");
             if (!verify(socket)) return;
 
             const gameId = socket["userData"]["gameId"];
@@ -173,7 +174,6 @@ io.on("connection", (socket) => {
 
     socket.on("placeBid", (god, amount) => {
         try {
-            console.log("placeBid");
             if (!verify(socket)) return;
             const gameId = socket["userData"]["gameId"];
             const game = getGame(gameId);
@@ -284,6 +284,56 @@ io.on("connection", (socket) => {
                 and after building metropolitan, remove the count of all 4 blocks
 
         */
+    });
+
+    socket.on("fight", (blockId, players, dice) => {
+        try {
+            if (!verify(socket)) return;
+            const playerId = socket["userData"]["id"];
+            const gameId = socket["userData"]["gameId"];
+            const game = getGame(gameId);
+            if (
+                blockId >= 0 &&
+                blockId < game.boardState.board.blocks.length &&
+                players &&
+                players.length == 2 &&
+                dice == -1
+            ) {
+                if (
+                    players[0] >= 0 &&
+                    players[0] < game.numPlayers &&
+                    players[1] >= 0 &&
+                    players[1] < game.numPlayers &&
+                    players[0] !== players[1]
+                ) {
+                    game.boardState.fight.blockId = blockId;
+                    game.boardState.fight.players = players;
+                    sendGameObjToPlayers(game);
+                    const name0 = game.players[players[0]].name;
+                    const name1 = game.players[players[1]].name;
+                    sendInfo(
+                        game,
+                        undefined,
+                        "Fight between " + name0 + " and " + name1
+                    );
+                }
+            } else if (dice >= 0 && dice <= 3) {
+                if (players[0] == playerId) {
+                    game.boardState.fight.dice[0] = dice;
+                } else if (players[1] == playerId) {
+                    game.boardState.fight.dice[1] = dice;
+                } else {
+                    return;
+                }
+
+                // TODO: Moga - add fight logic here if both dice results are received
+
+                sendGameObjToPlayers(game);
+            }
+        } catch (err) {
+            console.log("fight failure");
+            console.log(err);
+        }
     });
 
     socket.on("disconnect", () => {

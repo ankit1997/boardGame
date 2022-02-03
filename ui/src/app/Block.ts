@@ -28,6 +28,8 @@ export class Block {
   public numProsperityMarkers: number;
   public pieces: Piece[] = [];
   public neighbours: number[];
+  public groupId: number;
+  public groupSize: number;
 
   constructor(public type: string) {}
 

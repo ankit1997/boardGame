@@ -162,8 +162,6 @@ const placePlayerShip = (game, playerId, block) => {
         game.players[playerId].gold -= game.players[playerId].shipsAdded - 1;
         game.gold += game.players[playerId].shipsAdded - 1;
     }
-
-    console.log("afterx2: " + game.players[playerId].ships);
 };
 
 const placePlayerFort = (game, playerId, block) => {

@@ -61,6 +61,24 @@ const sendError = (game, playerId, message) => {
     }
 };
 
+const sendInfo = (game, playerId, message) => {
+    for (let playerInfo of game.playersInfo) {
+        if (playerId != undefined && playerInfo.id != playerId) {
+            continue;
+        }
+        const auth = game.playersAuth[playerInfo.id];
+        if (auth.socketId == undefined) {
+            continue;
+        }
+        const socket = io.sockets.sockets.get(auth.socketId);
+        if (socket == undefined) {
+            continue;
+        }
+        socket.emit("info", message);
+    }
+};
+
 exports.sendGameObjToPlayer = sendGameObjToPlayer;
 exports.sendGameObjToPlayers = sendGameObjToPlayers;
 exports.sendError = sendError;
+exports.sendInfo = sendInfo;

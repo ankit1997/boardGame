@@ -442,6 +442,20 @@
           </div>
         </div>
         <div *ngIf="playerState.prevBidGod == 'APOLLO'"></div>
+        <div
+          *ngIf="
+            properties.boardState.fight.players[0] === playerState.id ||
+            properties.boardState.fight.players[1] === playerState.id
+          "
+        >
+          <div style="margin: 5px; display: inline-block">
+            <p-button
+              styleClass="p-button-success"
+              label="{{ diceOutput == -1 ? '🎲' : 'Result: ' + diceOutput }}"
+              (onClick)="diceRoll()"
+            ></p-button>
+          </div>
+        </div>
         <div style="margin: 5px; display: inline-block">
           <p-button
             styleClass="p-button-primary"
