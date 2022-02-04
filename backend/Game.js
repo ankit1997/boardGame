@@ -205,7 +205,6 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             ports: 0,
             forts: 0,
             metropolitan: 0,
-            creatures: [],
             // below are stuff added in current user turn
             prevBidGod: undefined,
             soldiersAdded: 0,
@@ -215,19 +214,14 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             metropolitansAdded: 0,
         };
     }
-    game.numPlayers = game.playersInfo.length;
-    game.gold = 100 - startGold * playersInfo.length;
-    game.prosperity_markers = 16;
-    game.territory_markers = 15;
-    game.priests = 18;
-    game.philosophers = 17;
-    game.soldiers = 40;
-    game.ships = 40;
-    game.ports = 10;
-    game.forts = 10;
-    game.temples = 10;
-    game.universities = 10;
-    game.metropolitan = 10;
+    game.Creatures = {};
+    game.Creatures[creature.id] = {
+        name: creature.name,
+        id: creature.id,
+        position_in_pile: 0,
+        position_on_board: 0,
+        owner: ""//TO DO ANKIT WANT TO STORE CREATURE OWNER, PLAYERID can be stored
+    };
     game.creatures_pile = [
         "CHIMERA",
         "CYCLOPS",
@@ -248,6 +242,20 @@ const getNewGame = (gameId, width, height, playersInfo) => {
         "THE_KRAKEN",
     ];
     game.creatures_open = {};
+    game.numPlayers = game.playersInfo.length;
+    game.gold = 100 - startGold * playersInfo.length;
+    game.prosperity_markers = 16;
+    game.territory_markers = 15;
+    game.priests = 18;
+    game.philosophers = 17;
+    game.soldiers = 40;
+    game.ships = 40;
+    game.ports = 10;
+    game.forts = 10;
+    game.temples = 10;
+    game.universities = 10;
+    game.metropolitan = 10;
+
     game.boardState = {
         stage: "SETUP", // possible values are 'SETUP', 'BIDDING', 'ACTION'
         turnOrder: shuffle([...Array(playersInfo.length).keys()]),
