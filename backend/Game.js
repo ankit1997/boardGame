@@ -214,14 +214,16 @@ const getNewGame = (gameId, width, height, playersInfo) => {
             metropolitansAdded: 0,
         };
     }
-    game.Creatures = {};
-    game.Creatures[creature.id] = {
+    game.creatures = {};
+    game.creatures[creature.id] = {
         name: creature.name,
         id: creature.id,
-        position_in_pile: 0,
-        position_on_board: 0,
-        owner: ""//TO DO ANKIT WANT TO STORE CREATURE OWNER, PLAYERID can be stored
+        positionInPile: 0,
+        positionOnBoard: 0,
+        blockId: 0,
+        blockgroupId: 0
     };
+
     game.creatures_pile = [
         "CHIMERA",
         "CYCLOPS",

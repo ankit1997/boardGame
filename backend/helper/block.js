@@ -133,6 +133,18 @@ const addUniversity = (game, block, playerId) => {
     updateOwner(game, block, playerId);
 };
 
+const buildingOnBlock = (block) => {
+
+    if(block.numTemples > 0)
+        return "temples";
+    if(block.numForts > 0)
+        return "forts";
+    if(block.numPorts > 0)
+        return "ports";
+    if(block.numUniversities > 0)
+        return "universities";
+}
+
 exports.newLandBlock = newLandBlock;
 exports.newSeaBlock = newSeaBlock;
 exports.updateOwner = updateOwner;
@@ -140,5 +152,6 @@ exports.addSoldier = addSoldier;
 exports.addShip = addShip;
 exports.removeSoldier = removeSoldier;
 exports.removeShip = removeShip;
+exports.buildingOnBlock = buildingOnBlock;
 exports.getBlocksByGroupId = getBlocksByGroupId;
 exports.getGroupBlocksByBlockId = getGroupBlocksByBlockId;

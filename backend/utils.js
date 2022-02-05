@@ -22,104 +22,119 @@ function shuffle(array) {
 
     return array;
 }
-const check_player_owns_creature = (game, playerId, creature_name) => {
+const checkPlayerOwnsCreature = (block, creatureName, creatures) => {
 
-    const creature_id = 2; //TO DO ANKIT fetch creature id from creature name
-    if(playerId == creatures[creature_id].owner)  //CHECK FOR OWNERSHIP
+    const creatureId = 2; //TO DO ANKIT fetch creature id from creature name
+    if(playerId == creatures[creatureId].owner)  //CHECK FOR OWNERSHIP
         return 1;
     else
         return 0;
 }
-function creature_CHIMERA(playerId, creature_index){
+const isCreatureOnBlock = (block, creature) => {
+
+    return (creature.blockId==block.id);
+    
 }
-function creature_THE_FATES(playerId, creature_index){
+function creature_CHIMERA(playerId, creatureIndex){
 }
-function creature_GRIFFON(playerId, creature_index){
+function creature_THE_FATES(playerId, creatureIndex){
 }
-const creature_GIANT = (game, playerId, creature_id)  => {
+function creature_GRIFFON(playerId, creatureIndex){
+}
+const creature_GIANT = (game, playerId, blockId, CplayerId)  => {
     
     // pop up player name and building name to destroy.
     //player_bulding_to_be_destroyed;
-    // building_to_be_destroyed;
-    // TODO ANKIT to fill variable player_bulding_to_be_destroyed and building_to_be_destroyed
+    // buildingToBeDestroyed;
+    // TODO ANKIT to fill variable player_bulding_to_be_destroyed and buildingToBeDestroyed
 
-    const building_to_be_destroyed = "TEMPLE"
-    const player_bulding_to_be_destroyed_id = 2; 
-    const creature_index = 1; // TO DO ANKIT Get "Creature index from Creature Id"
+    //block.owner = id
+    //null check
+    const block = game.boardState.board.blocks[blockId];
+    
+    const buildingToBeDestroyed = buildingOnBlock(block);
+    
+    const creatureId = 1; // TO DO ANKIT Get "Creature Id"
 
-    if(!check_player_owns_creature(game,player_bulding_to_be_destroyed_id,'CHIRON'))
-    {
-        if (building_to_be_destroyed == 'temples')
-            game.player[player_bulding_to_be_destroyed_id].temples--;
-        if (building_to_be_destroyed == 'fortress')
-            game.player[player_bulding_to_be_destroyed_id].forts--;
-        if (building_to_be_destroyed == 'ports')
+    const creature = game.creatures[creatureId];
+
+    if(checkPlayerOwnsCreature(block, 'CHIRON', game.creatures) && (isCreatureOnBlock(block, creature))) {
+        if (buildingToBeDestroyed == 'temples') {
+            game.players[block.owner].temples--;
+            block.numTemples--;
+        }
+        if (buildingToBeDestroyed == 'fortress') {
+            game.player[block.owner].forts--;
+        }
+        if (buildingToBeDestroyed == 'ports') {
             game.player[player_bulding_to_be_destroyed_id].ports--;
-        if (building_to_be_destroyed == 'universities')
+        }
+        if (buildingToBeDestroyed == 'universities')
             game.player[player_bulding_to_be_destroyed_id].universities--;
         
-        game.player[playerId].gold -= max(1, creature[creature_index].position_on_board - game.player[playerId].temples +1);
-        game.gold += max(1, creature[creature_index].position_on_board - game.player[playerId].temples +1);
+        game.player[playerId].gold -= max(1, game.creatures[creatureId].position_on_board - game.players[playerId].temples +1);
+        game.gold += max(1, game.creatures[creatureIndex].position_on_board - game.players[playerId].temples +1);
     }
     return;
 
 }
 
-const creature_DRYAD = (game, playerId, creature_index) => {
+const creature_DRYAD = (game, playerId, CplayerId) => {
+    
+    //CplayerId = PlayerID of player on which creature is called.
     //TO DO ANKIT Open a pop up asking for name of player to take priest card from.
-    const player_name = "VIBHOR" //FETCH NAME FROM UI
-    const player_to_taken_priest_from_id  = 1; //FETCH ID FROM NAME
+    const creatureId = 1; // TO DO GET CREATURE ID OF DRYAD
     
-    if (game.player[player_to_taken_priest_from_id].priests > 0)
+    if (game.player[CplayerId].priests > 0)
     {
-        game.player[player_to_taken_priest_from_id].priests--;
-        game.player[playerId].priests++;
-        game.player[playerId].gold -= max(1, game.creature[creature_index]-game.player[playerId].temples);
-        game.gold += max(1, game.creature[creature_index]-game.player[playerId].temples);
+        game.players[CplayerId].priests--;
+        game.players[playerId].priests++;
+        game.players[playerId].gold -= max(1, game.creatures[creatureId].positionOnBoard-game.players[playerId].temples+1);
+        game.gold += max(1, game.creatures[creatureId].positionOnBoard-game.players[playerId].temples+1);
     }
-    return;
+    //TODO ANKIT AFTER USAGE DISCARD CARD
 }
 
-const creature_SATYR = (game, playerId, creature_index) => {
+const creature_SATYR = (game, playerId, CplayerId) => {
     
+    //CplayerId = PlayerID of player on which creature is called.
     //TO DO ANKIT Open a pop up asking for name of player to take priest card from.
-    const player_name = "VIBHOR" //FETCH NAME FROM UI
-    const player_to_taken_philospher_from_id  = 1; //FETCH ID FROM NAME
+    const creatureId = 1; // TO DO GET CREATURE ID OF DRYAD
     
-    if(game.player[player_to_taken_philospher_from_id].priests > 0)
+    if (game.player[CplayerId].philosphers > 0)
     {
-            game.player[player_to_taken_philospher_from_id].philosophers--;
-            game.player[playerId].philosophers++;
-            game.player[playerId].gold -= max(1, game.creature[creature_index]-game.player[playerId].temples);
-            game.gold += max(1, game.creature[creature_index]-game.player[playerId].temples);
+        game.players[CplayerId].philosphers--;
+        game.players[playerId].philosphers++;
+        game.players[playerId].gold -= max(1, game.creatures[creatureId].positionOnBoard-game.players[playerId].temples+1);
+        game.gold += max(1, game.creatures[creatureId].positionOnBoard-game.players[playerId].temples+1);
     }
-    return;
+    //TODO ANKIT AFTER USAGE DISCARD CARD
 }
 
 
-function creature_HARPY(playerId, creature_index){
+function creature_HARPY(playerId, creatureIndex){
 }
-function creature_PEGASUS(playerId, creature_index){
+function creature_PEGASUS(playerId, creatureIndex){
 }
-function creature_SIREN(playerId, creature_index){
+function creature_SIREN(playerId, creatureIndex){
 }
-function creature_SPHINX(playerId, creature_index){
+function creature_SPHINX(playerId, creatureIndex){
 }
-function creature_SYLPH(playerId, creature_index){
+function creature_SYLPH(playerId, creatureIndex){
 }
-function creature_CHIRON(playerId, creature_index){
+function creature_CHIRON(playerId, creatureIndex){
 }
-function creature_MEDUSA(playerId, creature_index){
+function creature_MEDUSA(playerId, creatureIndex){
 }
-function creature_MINOTAUR(playerId, creature_index){
+function creature_MINOTAUR(playerId, creatureIndex){
 }
-function creature_POLYPHEMUS(playerId, creature_index){
+function creature_POLYPHEMUS(playerId, creatureIndex){
 }
-function creature_THE_KRAKEN(playerId, creature_index){
+function creature_THE_KRAKEN(playerId, creatureIndex){
 }
 
 
-function creature_CYCLOPS(playerId, creature_index)
+function creature_CYCLOPS(playerId, creatureIndex)
 {
     /*
     //pop up or drop down box for replace a building with another. 
